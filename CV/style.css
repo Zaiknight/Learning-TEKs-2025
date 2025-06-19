@@ -116,16 +116,34 @@ Main Section Start*/
 
 .fa-brands.fa-github.fa-3x{
     margin-top: 30px;
+    text-decoration: none;
     color: hsl(210, 12%, 16%);
 }
 .fa-brands.fa-github.fa-3x:hover{
     color: hsl(210, 12%, 36%);
+    text-decoration: none;
 }
 .fa-brands.fa-github.fa-3x:visited{
     margin-top: 30px;
+    text-decoration: none;
     color: hsl(210, 12%, 16%);
 }
 
+.fa-brands.fa-linkedin.fa-3x{
+    margin-left: 10px;
+    text-decoration: none;
+    color: hsl(210, 90%, 40%)
+}
+.fa-brands.fa-linkedin.fa-3x:hover{
+    margin-left: 10px;
+    text-decoration: none;
+    color: hsl(210, 90%, 60%)
+}
+.fa-brands.fa-linkedin.fa-3x:visited{
+    margin-left: 10px;
+    text-decoration: none;
+    color: hsl(210, 90%, 40%)
+}
 .skill-row {
     display: flex;
     justify-content: space-between;
