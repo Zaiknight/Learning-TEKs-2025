@@ -1,0 +1,131 @@
+/*19th June 2025
+CV Completed */
+
+/*Initializing margin and padding to 0 for all elements*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*Setting the font in body for constant usage*/
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f4f4;
+    color: #333;
+}
+
+/* using flexbox as the layout style*/
+.resume {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    margin: 20px auto;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* sidebar start*/
+.sidebar {
+    background: #0d3e55;
+    color: white;
+    width: 30%;
+    padding: 30px;
+    text-align: center;
+}
+
+.sidebar h2 {
+    margin-top: 10px;
+}
+
+.sidebar .title {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #e0f7fa;
+}
+
+.profile-pic img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px outset white;
+}
+/*Sidebar end
+Main Section Start*/
+.section {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.section h3 {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.bar {
+    display: block;
+    background: rgb(139, 139, 139);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.fill {
+    display: block;
+    height: 100%;
+    background: #03a9f4;
+}
+
+.full { width: 100%; }
+.threequarters { width: 80%; }
+.med { width: 50%; }
+.low { width: 20%; }
+
+
+.main {
+    width: 70%;
+    padding: 30px;
+}
+
+.main section {
+    margin-bottom: 30px;
+}
+
+.main h3 {
+    color: #29b6f6;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 5px;
+}
+
+.job {
+    margin-bottom: 15px;
+}
+
+.job h4 {
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.job .year {
+    font-size: 14px;
+    color: gray;
+}
+/*Main Section Done bar made using youtube tutorial*/
+
+
+.skill-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.skill-row p {
+    width: 48%;
+    margin-bottom: 10px;
+}
+
+.reference p {
+    margin-bottom: 10px;
+}
