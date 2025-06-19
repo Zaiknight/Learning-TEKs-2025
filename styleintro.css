@@ -1,0 +1,22 @@
+body {
+    background-color: rgb(0, 0, 0);
+    color: rgb(135, 202, 135);
+    font-family: "Times New Roman", serif;
+  }
+  h1 {
+    color: rgb(95, 95, 207);
+    font-size: 250%;
+    text-align: center;
+    background-color: lightgrey;
+    padding: 20px;
+    margin:0 auto;
+    display: inline;
+  }
+  p {
+    font-size: 175%;
+    text-align: center;
+  }
+  img {
+    display: block;
+    margin: auto;
+  }
