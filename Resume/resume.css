@@ -1,0 +1,104 @@
+/* Base Design CSS File*/
+/*Website Heading*/
+html,body{
+    margin: 0px;
+    background-color: hsl(193, 66%, 77%);
+    height: 100%;
+}
+
+h1 a{
+    text-align: center;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    display: block;
+    margin-top: -22px;
+    margin-bottom: -22px;
+    background-color: rgb(231, 231, 231);
+
+}
+/*Navigation Bar Design */
+nav{
+    display: sticky;
+}
+
+.navbar ul{
+    list-style-type: none;
+    background-color: rgb(60, 60, 60);
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+.navbar a{
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    display: block;
+    text-align: center;
+}
+
+.navbar a:hover{
+    background-color:hsl(0, 0%, 40%)
+}
+
+.navbar li{
+    float: left;
+}
+/*Nav Bar end*/
+
+
+/*Footer Design*/
+/* CSS Design Done on 19th June 2025 */
+footer{
+    margin: 30px;
+    padding: 15px;
+    text-align: center;
+    border-style:outset;
+    border-radius: 30px;
+    display: block;
+    max-width: 40%;
+    border-color: rgb(234, 239, 255);
+    background-color: #E0F2F7;
+    color: rgb(0, 17, 32);
+}
+
+footer a{
+    text-align: center;
+    margin-right: 20px;
+    text-decoration: none;
+}
+footer a:visited{
+    text-decoration: none;
+}
+.fa-solid.fa-envelope.fa-3x{
+    color: hsl(221, 100%, 50%)
+}
+.fa-solid.fa-envelope.fa-3x:hover{
+    color: hsl(221, 100%, 75%)
+}
+
+.fa-brands.fa-linkedin.fa-3x{
+    color: hsl(210, 90%, 40%)
+}
+.fa-brands.fa-linkedin.fa-3x:hover{
+    color: hsl(210, 90%, 60%)
+}
+
+.fa-brands.fa-square-facebook.fa-3x{
+    color: hsl(214,89%,52%)
+}
+.fa-brands.fa-square-facebook.fa-3x:hover{
+    color: hsl(214,89%,72%)
+}
+
+.fa-brands.fa-square-github.fa-3x{
+    color: hsl(210, 12%, 16%);
+}
+.fa-brands.fa-square-github.fa-3x:hover{
+    color: hsl(210, 12%, 36%);
+}
+.wrapper{
+    display: flex;
+    align-items: flex-end;
+}
+/*Footer End /*
