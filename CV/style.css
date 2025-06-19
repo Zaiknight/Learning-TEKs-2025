@@ -114,6 +114,17 @@ Main Section Start*/
 }
 /*Main Section Done bar made using youtube tutorial*/
 
+.fa-brands.fa-github.fa-3x{
+    margin-top: 30px;
+    color: hsl(210, 12%, 16%);
+}
+.fa-brands.fa-github.fa-3x:hover{
+    color: hsl(210, 12%, 36%);
+}
+.fa-brands.fa-github.fa-3x:visited{
+    margin-top: 30px;
+    color: hsl(210, 12%, 16%);
+}
 
 .skill-row {
     display: flex;
