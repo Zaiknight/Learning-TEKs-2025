@@ -1,0 +1,29 @@
+body{
+    text-align: center;
+    font-family:cursive;
+    color:blanchedalmond;
+    background-color: rgb(49, 37, 82);
+}
+
+#randomNum{
+    font-size: 5rem;
+}
+
+.container{
+    padding: 1.2rem;
+}
+input{
+    color: bisque;
+    background-color: rgba(16, 2, 82, 0.774);
+    border-radius: 30px;
+    margin: 10px;
+    width: 20%;
+    font-size: large;
+}
+
+button{
+    border-radius: 20px;
+    background-color: rgba(71, 1, 141, 0.493);
+    color: burlywood;
+    font-size: 1.3rem;
+}

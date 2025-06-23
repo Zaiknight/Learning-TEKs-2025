@@ -1,0 +1,31 @@
+body{
+    background-color: rgb(0, 0, 48);
+    color: antiquewhite;
+    text-align: center;
+    padding: 2rem;
+}
+
+.count{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 10rem;
+}
+
+button{
+    width: 30%;
+    border-style: outset;
+    border-color: rgba(0, 9, 90, 0.774);
+    border-radius: 20px;
+    padding: 1rem;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: large;
+    background-color: antiquewhite;
+    cursor: pointer;
+}
+
+button:hover{
+    opacity: 0.8;
+}
+
+button:active{
+    opacity: 0.6;
+}
