@@ -1,0 +1,30 @@
+body{
+    background-color: slategray;
+    color:rgb(213, 239, 255);
+    font-family:monospace;
+    text-align: center;
+}
+select{
+    border-radius: 20px;
+    font-size: large;
+    padding: 10px;
+    background-color:cadetblue;
+}
+input{
+    border-style:outset;
+    border-radius: 30px;
+    background-color: rgb(242, 252, 197);
+    color: rgb(7, 44, 77);
+    font-size: x-large;
+    text-align: center;
+}
+input::placeholder{
+    color:rgba(93, 91, 235, 0.527);
+}
+button{
+    border-radius: 20px;
+    font-size: large;
+    padding: 10px;
+    background-color:cadetblue;
+    border-style: outset;
+}

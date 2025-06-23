@@ -1,5 +1,5 @@
 function getMinMax() {
-    let min = 0, max = 32768;
+    let min, max;
 
     let minInput = document.getElementById('min');
     let maxInput = document.getElementById('max');
@@ -7,11 +7,23 @@ function getMinMax() {
     min = minInput.value;
     max = maxInput.value;
 
-    rand(min,max);
+    if(min == 0 && max == 0){
+        min = 0;
+        max = 32768;
+        rand(min,max);
+    }
+    else if(max == 0){
+        max = 32768;
+        rand(min,max);
+    }
+    else{
+        rand(min,max);
+    }
+
 }
 
 function rand(min,max){
-    let rand = Number(Math.floor(Math.random()*max) + Number(min));
+    let rand = Number(Math.floor(Math.random()*(max-min)) + Number(min));
     document.getElementById("randomNum").innerText = rand;
 }
 
