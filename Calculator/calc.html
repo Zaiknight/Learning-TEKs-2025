@@ -14,25 +14,28 @@
         </div>
         <div class="calculator__output" id="display">0</div>
         <div class="calculator__keys">
-          <button class="calculator_key calculator_key--operator" id="add" onclick="storeAction('+')">+</button>
-          <button class="calculator_key calculator_key--operator" id="sub" onclick="storeAction('-')">-</button>
-          <button class="calculator_key calculator_key--operator" id="mul" onclick="storeAction('mul')">&times;</button>
-          <button class="calculator_key calculator_key--operator" id="div" onclick="storeAction('div')">&divide;</button>
-          <button class="calculator__key" id="7" onclick="storeInput(7)">7</button>
-          <button class="calculator__key" id="8" onclick="storeInput(8)">8</button>
-          <button class="calculator__key" id="9" onclick="storeInput(9)">9</button>
-          <button class="calculator__key" id="4" onclick="storeInput(4)">4</button>
-          <button class="calculator__key" id="5" onclick="storeInput(5)">5</button>
-          <button class="calculator__key" id="6" onclick="storeInput(6)">6</button>
-          <button class="calculator__key" id="1" onclick="storeInput(1)">1</button>
-          <button class="calculator__key" id="2" onclick="storeInput(2)">2</button>
-          <button class="calculator__key" id="3" onclick="storeInput(3)">3</button>
-          <button class="calculator__key" id="0" onclick="storeInput(0)">0</button>
-          <button class="calculator__key" id="." onclick="storeInput('.')">.</button>
-          <button class="calculator__key" id="AC" onclick="clearCalculator()">AC</button>
-          <button class="calculator_key calculator_key--enter" id="equalTo" onclick="calculate()" >=</button>
+          <button class="calculator_key calculator_key--operator" id="add" onclick="inputs.storeAction('+')">+</button>
+          <button class="calculator_key calculator_key--operator" id="sub" onclick="inputs.storeAction('-')">-</button>
+          <button class="calculator_key calculator_key--operator" id="mul" onclick="inputs.storeAction('mul')">&times;</button>
+          <button class="calculator_key calculator_key--operator" id="div" onclick="inputs.storeAction('div')">&divide;</button>
+          <button class="calculator__key" id="7" onclick="inputs.storeInput(7)">7</button>
+          <button class="calculator__key" id="8" onclick="inputs.storeInput(8)">8</button>
+          <button class="calculator__key" id="9" onclick="inputs.storeInput(9)">9</button>          
+          <button class="calculator_key calculator_key--operator" id="root" onclick="inputs.storeAction('root')">√</button>
+          <button class="calculator__key" id="4" onclick="inputs.storeInput(4)">4</button>
+          <button class="calculator__key" id="5" onclick="inputs.storeInput(5)">5</button>
+          <button class="calculator__key" id="6" onclick="inputs.storeInput(6)">6</button>
+          <button class="calculator_key calculator_key--operator" id="exp" onclick="inputs.storeAction('exp')">^</button>
+          <button class="calculator__key" id="1" onclick="inputs.storeInput(1)">1</button>
+          <button class="calculator__key" id="2" onclick="inputs.storeInput(2)">2</button>
+          <button class="calculator__key" id="3" onclick="inputs.storeInput(3)">3</button>
+          <button class="calculator_key calculator_key--operator" id="exp" onclick="inputs.storeAction('percentage')">%</button>
+          <button class="calculator__key" id="0" onclick="inputs.storeInput(0)">0</button>
+          <button class="calculator__key" id="." onclick="inputs.storeInput('.')">.</button>
+          <button class="calculator__key" id="AC" onclick="display.clearCalculator()">AC</button>
+          <button class="calculator_key calculator_key--enter" id="equalTo" onclick="calculate.calculate()" >=</button>
         </div>
       </div>
-    <script src="index.js"></script>
+    <script src="interface.js"></script>
 </body>
 </html>

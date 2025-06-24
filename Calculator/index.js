@@ -16,14 +16,20 @@ function storeAction(op) {
         '+': '+',
         '-': '-',
         'mul': '*',
-        'div': '/'
+        'div': '/',
+        'exp': '**',
+        'root': `**(1/2)`,
+        'percentage': `/100`
     };
 
     const displayOps = {
         '+': '+',
         '-': '-',
         'mul': '×',
-        'div': '÷'
+        'div': '÷',
+        'exp': '^',
+        'root': `√`,
+        'percentage': '%'
     };
 
     if (rawOps[op] && displayOps[op]) {
@@ -38,10 +44,12 @@ function calculate() {
 
     try {
         const result = eval(rawExpression);
-        addToHistory(displayExpression = result);
+        addToHistory(`${displayExpression} = ${displayExpression = result}`);
         rawExpression = result.toString();
         displayExpression = result.toString();
         updateDisplay(displayExpression);
+        rawExpression = '';
+        displayExpression = '';
     } catch {
         updateDisplay('Error');
         rawExpression = '';
@@ -88,7 +96,11 @@ document.addEventListener('keydown', function (event) {
         calculate();
     } else if (key === 'Escape') {
         clearCalculator();
-    } else if (key === 'Backspace') {
+    } else if(key === '^'){
+        storeAction('exp');
+    }else if(key === '%'){
+        storeAction('percentage');
+    }else if (key === 'Backspace') {
         rawExpression = rawExpression.slice(0, -1);
         displayExpression = displayExpression.slice(0, -1);
         updateDisplay(displayExpression);
