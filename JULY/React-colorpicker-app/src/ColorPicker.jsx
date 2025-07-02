@@ -10,7 +10,7 @@ function ColorPicker(){
 
     return(
     <body className='container' style={{backgroundColor: color, margin:'0', overflow: 'hidden'}}>
-        <div className='colorPickerContainer' style={{backgroundColor: "#111111"}}>
+        <div className='colorPickerContainer' style={{backgroundColor: "#242424"}}>
             <h1>Color Picker</h1>
             <div className='colorDisplay' style={{backgroundColor: color,
                                                 borderRadius: '30px',
