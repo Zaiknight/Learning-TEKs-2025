@@ -1,0 +1,6 @@
+{
+  "packageManager": "yarn@4.9.2",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11"
+  }
+}
