@@ -1,3 +1,15 @@
 @import "tailwindcss";
 
 @tailwind utilities;
+:root{
+    background-color: rgb(16,24,40);
+}
+
+::-webkit-scrollbar {
+    background-color: rgb(30,41,57);
+}
+
+::-webkit-scrollbar-thumb{
+    background-color: rgb(16,24,40);
+    border-radius: 40px;
+}
