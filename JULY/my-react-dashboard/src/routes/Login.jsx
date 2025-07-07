@@ -42,6 +42,7 @@ function Login() {
             console.log('You are logged in.');
             setCookie("CurrentUserName",JSON.stringify(foundUser.name),1);
             setCookie("CurrentUser",JSON.stringify(foundUser),1);
+            localStorage.setItem('current_user', JSON.stringify(foundUser));
             navigate('/dashboard');
 
         } else if(!foundUser){
