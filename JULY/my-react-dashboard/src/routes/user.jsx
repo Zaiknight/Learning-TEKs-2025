@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SidebarLayout from '../components/MainComponent.jsx';
+import Modal from "../components/Modal.jsx";
+
 
 // Helper to get users from localStorage
 function getStoredUsers() {
@@ -11,7 +13,7 @@ function isUserAdmin(user) {
   return user && (user.isAdmin === true || user.isAdmin === "true");
 }
 
-// Helper to get current logged-in user (assume stored in localStorage as "current_user")
+// Helper to get current logged-in user
 function getCurrentUser() {
   return JSON.parse(localStorage.getItem("current_user")) || {};
 }
@@ -21,7 +23,7 @@ function formatDate(dateString) {
   if (!dateString) return "";
   try {
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString; // fallback to raw if parse fails
+    if (isNaN(date.getTime())) return dateString; 
     // Format: YYYY-MM-DD or DD/MM/YYYY or as needed
     // Here: DD/MM/YYYY
     return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth()+1).toString().padStart(2, "0")}/${date.getFullYear()}`;
@@ -33,6 +35,7 @@ function formatDate(dateString) {
 export default function UsersList() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setUsers(getStoredUsers());
@@ -45,6 +48,7 @@ export default function UsersList() {
     userList.splice(Number(index), 1);
     localStorage.setItem("all_users", JSON.stringify(userList));
     setUsers(userList); // Update state to re-render
+    setOpen(false); //to close pop-up modal
   }
 
   // Only admins can delete, and they cannot delete admins (including themselves)
@@ -52,12 +56,12 @@ export default function UsersList() {
     const currentIsAdmin = isUserAdmin(currentUser);
     const targetIsAdmin = isUserAdmin(targetUser);
     if (!currentIsAdmin) return false;
-    if (targetIsAdmin) return false;
+    if (targetIsAdmin) return true;
     return true;
   }
 
   // Only admins can edit
-  function canEdit(targetUser) {
+  function canEdit() {
     return isUserAdmin(currentUser);
   }
 
@@ -138,7 +142,7 @@ export default function UsersList() {
                                     : "text-gray-400 bg-gray-200 dark:text-gray-700 dark:bg-gray-700 cursor-not-allowed"
                                   }`}
                                 aria-label="Delete"
-                                onClick={canDeleteUser ? () => deleteUser(i) : undefined}
+                                onClick={() => setOpen(true)}
                                 disabled={!canDeleteUser}
                                 tabIndex={canDeleteUser ? 0 : -1}
                               >
@@ -146,6 +150,24 @@ export default function UsersList() {
                                   <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path>
                                 </svg>
                               </button>
+
+                              <Modal open={open} onClose={() => setOpen(false)}>
+                                <div className="mx-auto my-4 w-48">
+                                  <svg className="w-6 h-6 mx-auto" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path>
+                                  </svg>
+                                  <div className="mx-auto my-4 w-48">
+                                    <h3 className="text-lg text-gray-50 font-semibold text-center">Confirm Delete</h3>
+                                    <p className="text-sm text-gray-400 text-center">
+                                      Are you sure you want to delete this User?
+                                    </p>
+                                  </div>
+                                  <div className="flex gap-4">
+                                      <button className="btn btn-danger w-full bg-red-600 rounded-lg text-white p-2 hover:bg-red-700" onClick={canDeleteUser ?()=> deleteUser(i) : undefined}>Delete</button>
+                                      <button className="btn btn-light w-full bg-gray-500 rounded-lg p-2 hover:bg-gray-600 text-white" onClick={() => setOpen(false)}>Cancel</button>
+                                  </div>
+                                </div>
+                              </Modal>
                             </div>
                           </td>
                         </tr>

@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import Login from "./routes/Login.jsx";
 import Signup from "./routes/Signup.jsx";
 import Dashboard from "./routes/Dashboard.jsx";
 import UsersList from "./routes/user.jsx";
+import ToDoList from "./routes/ToDo.jsx";
+import QuizForm from "./routes/QuizForm.jsx";
 
 function App() {
   return (
@@ -10,9 +13,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<UsersList />} />
+        <Route element={<ProtectedRoutes/>}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/users" element={<UsersList />} />
+          <Route path="/to-do-list" element={<ToDoList />}/>
+          <Route path="/quiz_form" element={<QuizForm/>} />
+        </Route>
         <Route path="*" element={<div>404 - Page Not Found</div>} />
+        
       </Routes>
     </BrowserRouter>
   );

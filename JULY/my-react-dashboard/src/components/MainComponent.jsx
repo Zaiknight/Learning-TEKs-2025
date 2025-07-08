@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
+
+function deleteCookie(cname) {
+  document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
 
 export default function SidebarLayout({ children }) {
   const location = useLocation();
@@ -25,35 +29,16 @@ export default function SidebarLayout({ children }) {
           <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
       ),
-      href: "/todolist",
+      href: "/to-do-list",
     },
     {
       label: "Quiz Form",
       icon: (
         <svg className="w-5 h-5" aria-hidden="true" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-          <path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-          <path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-        </svg>
-      ),
-      href: "/charts",
-    },
-    {
-      label: "Quiz",
-      icon: (
-        <svg className="w-5 h-5" aria-hidden="true" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
           <path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
         </svg>
       ),
-      href: "/buttons",
-    },
-    {
-      label: "Modals",
-      icon: (
-        <svg className="w-5 h-5" aria-hidden="true" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-          <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-      ),
-      href: "/modals",
+      href: "/quiz_form",
     },
     {
       label: "Users",
@@ -72,7 +57,7 @@ export default function SidebarLayout({ children }) {
   return (
     <div className={`flex bg-gray-50 dark:bg-gray-900 transition-all${isSideMenuOpen ? " overflow-hidden" : ""}`}>
       {/* Desktop sidebar */}
-      <aside className="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0">
+      <aside className="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0 h-screen" >
         <div className="py-4 text-gray-500 dark:text-gray-400">
           <Link
             className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
@@ -197,6 +182,19 @@ export default function SidebarLayout({ children }) {
               </div>
             </div>
             {/* (Rest of header: notifications, profile, etc.) */}
+            <div>
+            <Link to="/">
+            <button
+                className="px-2 py-1 bg-purple-500 text-white rounded  hover:bg-purple-700 active:bg-indigo-500"
+                onClick={()=>{
+                  deleteCookie("CurrentUser");
+                  deleteCookie("CurrentUserName");
+                  sessionStorage.setItem('login','false');
+                }}
+                >
+                  Log Out
+              </button></Link>
+            </div>
           </div>
         </header>
         <main className="flex-1">{children}</main>
