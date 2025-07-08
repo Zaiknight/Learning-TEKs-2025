@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SidebarLayout from "../components/MainComponent.jsx";
 import Modal from "../components/Modal.jsx";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link, NavLink } from "react-router-dom";
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -20,6 +20,7 @@ export default function QuizForm() {
   const [quizList, setQuizList] = useState(() => {
     return JSON.parse(localStorage.getItem("quiz_list")) || [];
   });
+
   const [input, setInput] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -29,7 +30,6 @@ export default function QuizForm() {
   const [addQues, setAddQues] = useState(false);
   const [addType, setAddType] = useState(false);
   const [questionStatement, setQuestionStatement] = useState('');
-  const [answer, setAnswer] = useState('');
   const [answerIndex, setAnswerIndex] = useState(null);
   const [questionType, setQuestionType] = useState('');
   const [optionInputs, setOptionInputs] = useState([""]);
@@ -201,7 +201,6 @@ export default function QuizForm() {
     [arr[qIdx], arr[qIdx + dir]] = [arr[qIdx + dir], arr[qIdx]];
     updated[quizIdx].questions = arr;
     setQuizList(updated);
-    // If editing, update qIdx accordingly
     if (editingQuestion.quizIdx === quizIdx) {
       setEditingQuestion({
         quizIdx,
@@ -213,6 +212,7 @@ export default function QuizForm() {
   function isCorrectAnswer(idx) {
     return answerIndex === idx;
   }
+  
   
 
   return (
@@ -342,12 +342,13 @@ export default function QuizForm() {
                           >
                             Preview
                           </button>
+                          <Link to="/quiz">
                           <button
                             className={`px-2 py-1 h-10 w-35 mb-3 mr-2 bg- text-white rounded bg-indigo-700 hover:bg-indigo-900`}
-                            onClick={() => Navigate()}
+                            onClick={() => sessionStorage.setItem('QuizIndex',idx)}
                           >
                             Take Quiz
-                          </button>
+                          </button></Link>
                         </td>
                       </tr>
                       {addQues && addingToQuizIdx === idx && (

@@ -6,6 +6,7 @@ import Dashboard from "./routes/Dashboard.jsx";
 import UsersList from "./routes/user.jsx";
 import ToDoList from "./routes/ToDo.jsx";
 import QuizForm from "./routes/QuizForm.jsx";
+import Quiz from "./routes/Quiz.jsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/users" element={<UsersList />} />
           <Route path="/to-do-list" element={<ToDoList />}/>
           <Route path="/quiz_form" element={<QuizForm/>} />
+          <Route path="/quiz" element={<Quiz/>} />
         </Route>
         <Route path="*" element={<div>404 - Page Not Found</div>} />
         
