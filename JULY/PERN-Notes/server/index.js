@@ -17,10 +17,11 @@ pool.connect().then(() => console.log("Connected"))
 //Middleware and dependencies
 app.use(cors());
 app.use (express.json())
-//ROUTES...
 
+
+//ROUTES...
 //Create note
-app.post("/notes", async(req,res) =>{
+app.post("/notes/postNotes", async(req,res) =>{
     try{
         const {content,title} = req.body;
         const insertQuery ='INSERT INTO notes (content,title) VALUES($1,$2) RETURNING *';
@@ -35,7 +36,7 @@ app.post("/notes", async(req,res) =>{
 })
 
 //GET all notes
-app.get("/notes", async (req,res)=> {
+app.get("/notes/getNotes", async (req,res)=> {
     try {
         const allNotes = await pool.query("SELECT * FROM notes");
         res.json(allNotes.rows);
@@ -45,7 +46,7 @@ app.get("/notes", async (req,res)=> {
 })
 
 //get a note
-app.get("/notes/:id", async (req,res) => {
+app.get("/notes/get/:id", async (req,res) => {
     try {
         console.log(req.params);
         const {id} = req.params;
@@ -58,7 +59,7 @@ app.get("/notes/:id", async (req,res) => {
     }
 })
 //update a note
-app.put("/notes/:id", async (req,res)=> {
+app.put("/notes/update/:id", async (req,res)=> {
     try {
         const {id} = req.params;
         const {content,title} = req.body;
@@ -71,7 +72,7 @@ app.put("/notes/:id", async (req,res)=> {
 })
 
 //delete a note
-app.delete("/notes/:id", async(req,res)=>{
+app.delete("/notes/delete/:id", async(req,res)=>{
     try {
         const {id} = req.params;
         const deleteNote = await pool.query("DELETE FROM notes WHERE note_id = $1",[id]);
@@ -84,3 +85,4 @@ app.delete("/notes/:id", async(req,res)=>{
 app.listen(5000, ()=>{
     console.log("Server is connected on port 5000....")
 })
+

@@ -1,12 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+
+//components
+import ListNotes from './components/ListNotes'
+
 
 function App() {
-  const [count, setCount] = useState('')
+  
 
   return (
-    <>
-      
-    </>
+     <ListNotes/>
   )
 }
 
