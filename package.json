@@ -2,5 +2,9 @@
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
   }
 }
