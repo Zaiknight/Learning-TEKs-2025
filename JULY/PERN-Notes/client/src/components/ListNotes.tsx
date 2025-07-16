@@ -34,14 +34,14 @@ const ListNotes = () => {
     setAdd(true);
   };
 
-  const handleEditClick = (note) => {
+  const handleEditClick = (note:any) => {
     setEditId(note.note_id);
     setTitle(note.title);
     setContent(note.content);
     setAdd(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id:any) => {
     if (!window.confirm("Delete this note?")) return;
     try {
       await fetch(`http://localhost:5000/notes/delete/${id}`, {
@@ -53,7 +53,7 @@ const ListNotes = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
     try {
       if (editId) {
@@ -83,7 +83,7 @@ const ListNotes = () => {
 
   // Filter notes by search
   const filteredNotes = notes.filter(
-    (note) =>
+    (note :any) =>
       (note.title?.toLowerCase() || "").includes(search.toLowerCase()) ||
       (note.content?.toLowerCase() || "").includes(search.toLowerCase())
   );
@@ -192,7 +192,7 @@ const ListNotes = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
-            {filteredNotes.map((note) => (
+            {filteredNotes.map((note: any) => (
               <div
                 key={note.note_id}
                 className="relative group bg-neutral-700 rounded-2xl p-6 shadow-lg break-words transition-all duration-200 hover:scale-[1.03] hover:shadow-2xl min-h-[120px]"
