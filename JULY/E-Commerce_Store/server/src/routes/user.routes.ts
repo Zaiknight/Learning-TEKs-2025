@@ -11,8 +11,8 @@ router.get('/',UserController.getAllUsers);
 // GET /users/:id → get a single user by iD
 router.get('/:id',UserController.getUserById);
 
-// GET /users/:id → get a single user by iD
-router.get(`/by-email/:email`,UserController.getUserByEmail);
+// GET /users/email/:email → get a single user by iD
+router.get(`/email/:email`,UserController.getUserByEmail);
 
 // POST /users → create a new user
 router.post('/',UserController.createUser);
