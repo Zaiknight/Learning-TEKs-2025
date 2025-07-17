@@ -1,50 +1,75 @@
-
 // server/src/controllers/user.controller.ts
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
+import { ResponseHandler } from '../utils/response'; // Import the response utility
+
 
 export const UserController = {
   async getAllUsers(req: Request, res: Response) {
-    const users = await UserService.getAllUsers();
-    res.json(users);
+    try {
+      const users = await UserService.getAllUsers();
+      return ResponseHandler.success(res, 'Users fetched successfully', users);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message);
+    }
   },
 
   async getUserById(req: Request, res: Response) {
-    const id = Number(req.params.id);
-    const user = await UserService.getUserById(id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    try {
+      const id = Number(req.params.id);
+      const user = await UserService.getUserById(id);
+      if (!user) {
+        return ResponseHandler.error(res, 'User not found', 404);
+      }
+      return ResponseHandler.success(res, 'User fetched successfully', user);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message);
     }
-    res.json(user);
   },
 
-  async getUserByEmail(req: Request, res: Response){
-    const email = String(req.params.email);
-    const user = await UserService.getUserByEmail(email);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+  async getUserByEmail(req: Request, res: Response) {
+    try {
+      const email = String(req.params.email);
+      const user = await UserService.getUserByEmail(email);
+      if (!user) {
+        return ResponseHandler.error(res, 'User not found', 404);
+      }
+      return ResponseHandler.success(res, 'User fetched successfully', user);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message);
     }
-    res.json(user);
   },
 
   async createUser(req: Request, res: Response) {
-    const userData = req.body;
-    const newUser = await UserService.createUser(userData);
-    res.status(201).json(newUser);
+    try {
+      const userData = req.body;
+      const newUser = await UserService.createUser(userData);
+      return ResponseHandler.success(res, 'User created successfully!', newUser);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message);
+    }
   },
 
   async updateUser(req: Request, res: Response) {
-    const id = Number(req.params.id);
-    const updatedUser = await UserService.updateUser(id, req.body);
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
+    try {
+      const id = Number(req.params.id);
+      const updatedUser = await UserService.updateUser(id, req.body);
+      if (!updatedUser) {
+        return ResponseHandler.error(res, 'User not found', 404);
+      }
+      return ResponseHandler.success(res, 'User updated successfully!', updatedUser);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message);
     }
-    res.json(updatedUser);
   },
 
   async deleteUser(req: Request, res: Response) {
-    const id = Number(req.params.id);
-    await UserService.deleteUser(id);
-    res.status(204).send(); // No Content
+    try {
+      const id = Number(req.params.id);
+      await UserService.deleteUser(id);
+      return ResponseHandler.success(res, 'User deleted successfully');
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message);
+    }
   }
 };
