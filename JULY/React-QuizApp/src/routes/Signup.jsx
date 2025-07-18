@@ -1,5 +1,5 @@
-import officeImg from 'E:/Learning/WebDevelopment/2025/JULY/my-react-dashboard/src/assets/create-account-office.jpeg';
-import officeImgDark from 'E:/Learning/WebDevelopment/2025/JULY/my-react-dashboard/src/assets/create-account-office-dark.jpeg';
+import officeImg from 'E:/Learning/WebDevelopment/2025/JULY/React-QuizApp/src/assets/create-account-office.jpeg';
+import officeImgDark from 'E:/Learning/WebDevelopment/2025/JULY/React-QuizApp/src/assets/create-account-office-dark.jpeg';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 

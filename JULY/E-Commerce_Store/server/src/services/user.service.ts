@@ -1,5 +1,5 @@
 // server/src/services/user.service.ts
-import { CreateUserDTO, UpdateUserDTO, User} from '../models/user.model';
+import {User} from '../models/user.model';
 import { UserRepository } from '../repositories/user.repository';
 
 const userRepository = new UserRepository();
@@ -20,12 +20,12 @@ export const UserService = {
     return user;
   },
 
-  async createUser(userData: CreateUserDTO): Promise<User> {
+  async createUser(userData:any): Promise<User> {
     //email format check (if needed), todo:hash password (later), need to RND encryption libraries
-    return userRepository.create(userData);
+    return userRepository.createUser(userData);
   },
 
-  async updateUser(id: number, updates: Partial<UpdateUserDTO>): Promise<User | null> {
+  async updateUser(id: number, updates:any): Promise<User | null> {
     return userRepository.update(id, updates);
   },
 

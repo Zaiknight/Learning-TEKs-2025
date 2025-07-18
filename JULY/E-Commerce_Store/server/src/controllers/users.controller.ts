@@ -2,6 +2,8 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 import { ResponseHandler } from '../utils/response'; // Import the response utility
+import { CreateUserDto,UpdateUserDto } from '../models/user.model';
+import { ZodError } from "zod";
 
 
 export const UserController = {
@@ -23,7 +25,7 @@ export const UserController = {
       }
       return ResponseHandler.success(res, 'User fetched successfully', user);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.BadRequestError(res);
     }
   },
 
@@ -36,16 +38,19 @@ export const UserController = {
       }
       return ResponseHandler.success(res, 'User fetched successfully', user);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.BadRequestError(res, error.message);
     }
   },
 
   async createUser(req: Request, res: Response) {
     try {
-      const userData = req.body;
-      const newUser = await UserService.createUser(userData);
+      const parsedData = CreateUserDto.parse(req.body);
+      const newUser = await UserService.createUser(parsedData);
       return ResponseHandler.success(res, 'User created successfully!', newUser);
     } catch (error:any) {
+      if (error instanceof ZodError) {
+        return ResponseHandler.validationError(res, error.flatten().fieldErrors);
+      }
       return ResponseHandler.error(res, error.message);
     }
   },
@@ -53,12 +58,16 @@ export const UserController = {
   async updateUser(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const updatedUser = await UserService.updateUser(id, req.body);
+      const parsedData = UpdateUserDto.parse(req.body);
+      const updatedUser = await UserService.updateUser(id, parsedData);
       if (!updatedUser) {
         return ResponseHandler.error(res, 'User not found', 404);
       }
       return ResponseHandler.success(res, 'User updated successfully!', updatedUser);
     } catch (error:any) {
+      if (error instanceof ZodError) {
+        return ResponseHandler.validationError(res, error.flatten().fieldErrors);
+      }
       return ResponseHandler.error(res, error.message);
     }
   },
