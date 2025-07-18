@@ -5,6 +5,9 @@ import { ResponseHandler } from '../utils/response'; // Import the response util
 import { CreateUserDto,UpdateUserDto } from '../models/user.model';
 import { ZodError } from "zod";
 
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
 
 export const UserController = {
   async getAllUsers(req: Request, res: Response) {
@@ -25,7 +28,7 @@ export const UserController = {
       }
       return ResponseHandler.success(res, 'User fetched successfully', user);
     } catch (error:any) {
-      return ResponseHandler.BadRequestError(res);
+      return ResponseHandler.error(res, error.message, 401);
     }
   },
 
@@ -38,7 +41,7 @@ export const UserController = {
       }
       return ResponseHandler.success(res, 'User fetched successfully', user);
     } catch (error:any) {
-      return ResponseHandler.BadRequestError(res, error.message);
+      return ResponseHandler.error(res, error.message);
     }
   },
 
@@ -48,9 +51,7 @@ export const UserController = {
       const newUser = await UserService.createUser(parsedData);
       return ResponseHandler.success(res, 'User created successfully!', newUser);
     } catch (error:any) {
-      if (error instanceof ZodError) {
-        return ResponseHandler.validationError(res, error.flatten().fieldErrors);
-      }
+      console.log(error);
       return ResponseHandler.error(res, error.message);
     }
   },
@@ -65,10 +66,34 @@ export const UserController = {
       }
       return ResponseHandler.success(res, 'User updated successfully!', updatedUser);
     } catch (error:any) {
-      if (error instanceof ZodError) {
-        return ResponseHandler.validationError(res, error.flatten().fieldErrors);
-      }
       return ResponseHandler.error(res, error.message);
+    }
+  },
+  async login(req: Request, res: Response) {
+    const { email, password } = req.body;
+  
+    try {
+      const result = await UserService.loginUser(email, password);
+      res.status(200).json({
+        message: 'Login successful',
+        token: result.token,
+        user: result.user
+      });
+    } catch (error: any) {
+      res.status(401).json({ message: error.message });
+    }
+  },
+
+  async getProfile(req: AuthenticatedRequest, res: Response) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Unauthorized: No user found in token' });
+      }
+
+      const user = req.user; // from middleware
+      res.status(200).json({ message: "Profile fetched successfully", user });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
     }
   },
 

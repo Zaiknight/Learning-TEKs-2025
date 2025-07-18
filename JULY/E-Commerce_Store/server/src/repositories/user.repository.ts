@@ -2,7 +2,7 @@
 import { BaseRepository } from './base.repository';
 import { User } from '../models/user.model';
 import { pool } from '../config/db';
-import bcrypt from 'bcrypt';
+import { AuthUtil } from '../utils/auth.util';
 
 
 export class UserRepository extends BaseRepository<User> {
@@ -15,24 +15,18 @@ export class UserRepository extends BaseRepository<User> {
   }  
 
   async createUser(userData: any) {
-    const { name, email, password } = userData;
+    const { first_name,last_name, email, password } = userData;
 
     // Step 1: Hash the password before inserting
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 = salt rounds
+    const hashedPassword = await AuthUtil.hashPassword(password);
 
     const result = await pool.query(
-      `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *`,
-      [name, email, hashedPassword]
+      `INSERT INTO users (first_name,last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [ first_name,last_name, email, hashedPassword]
     );
-
-    
-
-    const existing:any = await pool.query(`SELECT * FROM users WHERE email = $1`, [email]);
-    if (existing.rowCount > 0){
-      throw new Error('Email already exists');
-    } else{
-      return result.rows[0];
-  }
+    const user = result.rows[0];
+    delete user.password;
+    return user;
   }
 
 

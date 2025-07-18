@@ -1,4 +1,4 @@
-/*This fill will do:
+/*This will do:
     Create Express app
     add middlewares
     Setup base routes
@@ -9,7 +9,6 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-
 
 import { NotFoundHandler, ErrorHandler } from './middleware/error.middleware';
 import userRoutes from './routes/user.routes';
