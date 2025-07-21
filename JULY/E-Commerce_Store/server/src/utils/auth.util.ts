@@ -1,30 +1,31 @@
 // server/src/utils/auth.util.ts
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt'; 
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
+const SALT_ROUNDS = 12;
+const JWT_KEY = process.env.JWT_SECRET as string;
 
 export const AuthUtil = {
   // Hash plain password
-  hashPassword: async (password: string) => {
-    const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
+  async hashPassword(password: string): Promise<string> {
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    return hashedPassword;
   },
 
   // Compare plain password with hash
   async comparePasswords(plainPassword: string, hashedPassword: string): Promise<boolean> {
-    return await bcrypt.compare(plainPassword, hashedPassword);
+    const check : boolean = await bcrypt.compare(plainPassword, hashedPassword);
+    return check;
   },
 
   // Generate JWT token
   generateToken(payload: { id: number; email: string }): string {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
+    return jwt.sign(payload, JWT_KEY, { expiresIn: '1d' });
   },
   
 
   // Verify JWT token
   verifyToken(token: string): any {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_KEY);
   },
 };
