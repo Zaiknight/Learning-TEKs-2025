@@ -36,6 +36,7 @@ export const adminService = {
   },
 
   async loginAdmin(email: string, password: string) {
+
     const admin = await adminRepository.findByEmail(email); 
   
     if (!admin) {
@@ -51,10 +52,11 @@ export const adminService = {
   
     const token = AuthUtil.generateToken({ id: admin.id, email: admin.email });
     
-    return { admin, token };
+    return { admin,token };
   },
 
   async updateAdmin(id: number, updates:any): Promise<Admin | null> {
+    updates.password = await AuthUtil.hashPassword(updates.password);
     return adminRepository.update(id, updates);
   },
 
@@ -62,3 +64,4 @@ export const adminService = {
     await adminRepository.delete(id);
   }
 };
+

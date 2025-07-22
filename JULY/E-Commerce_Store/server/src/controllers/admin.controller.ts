@@ -77,7 +77,6 @@ export const AdminController = {
         message: 'Login successful',
         token: result.token,
         Admin: result.admin
-        
       });
     } catch (error: any) {
       res.status(401).json({ message: error.message });

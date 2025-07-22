@@ -4,6 +4,7 @@ import { AuthUtil } from '../utils/auth.util';
 // Extend Request type to include `user`
 interface AuthenticatedRequest extends Request {
   user?: any;
+  admin?: any;
 }
 
 export function authenticateJWT(req: AuthenticatedRequest, res: Response, next: NextFunction) {

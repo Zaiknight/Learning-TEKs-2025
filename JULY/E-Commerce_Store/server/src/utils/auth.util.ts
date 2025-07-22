@@ -1,9 +1,11 @@
 // server/src/utils/auth.util.ts
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt'; 
+import dotenv from 'dotenv';
+
 
 const SALT_ROUNDS = 12;
-const JWT_KEY = process.env.JWT_SECRET as string;
+const JWT_KEY = process.env.JWT_KEY as string;
 
 export const AuthUtil = {
   // Hash plain password
@@ -20,7 +22,7 @@ export const AuthUtil = {
 
   // Generate JWT token
   generateToken(payload: { id: number; email: string }): string {
-    return jwt.sign(payload, JWT_KEY, { expiresIn: '1d' });
+    return jwt.sign(payload, JWT_KEY, { expiresIn: '1h' });
   },
   
 

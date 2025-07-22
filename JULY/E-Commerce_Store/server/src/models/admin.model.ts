@@ -18,6 +18,7 @@ export const CreateAdminDto = z.object({
   last_name: z.string().min(1, "Last name is required"),
   email: z.email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
+  role: z.string(),
 });
 
 export const UpdateAdminDto = CreateAdminDto.partial(); // all fields optional
