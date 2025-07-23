@@ -12,9 +12,9 @@ export const AdminController = {
   async getAllAdmins(req: Request, res: Response) {
     try {
       const Admins = await adminService.getAllAdmins();
-      return ResponseHandler.success(res, 'Admins fetched successfully', Admins);
+      return ResponseHandler.success(res, 'Admins fetched successfully',200, Admins);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message,500);
     }
   },
 
@@ -25,7 +25,7 @@ export const AdminController = {
       if (!Admin) {
         return ResponseHandler.error(res, 'Admin not found', 404);
       }
-      return ResponseHandler.success(res, 'Admin fetched successfully', Admin);
+      return ResponseHandler.success(res, 'Admin fetched successfully',200, Admin);
     } catch (error:any) {
       return ResponseHandler.error(res, error.message, 401);
     }
@@ -38,9 +38,9 @@ export const AdminController = {
       if (!Admin) {
         return ResponseHandler.error(res, 'Admin not found', 404);
       }
-      return ResponseHandler.success(res, 'Admin fetched successfully', Admin);
+      return ResponseHandler.success(res, 'Admin fetched successfully',200, Admin);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message,500);
     }
   },
 
@@ -48,10 +48,10 @@ export const AdminController = {
     try {
       const parsedData = CreateAdminDto.parse(req.body);
       const newAdmin = await adminService.createAdmin(parsedData);
-      return ResponseHandler.success(res, 'Admin created successfully!', newAdmin);
+      return ResponseHandler.success(res, 'Admin created successfully!',201, newAdmin.id);
     } catch (error:any) {
       console.log(error);
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.validationError(res, error.message);
     }
   },
 
@@ -63,9 +63,9 @@ export const AdminController = {
       if (!updatedAdmin) {
         return ResponseHandler.error(res, 'Admin not found', 404);
       }
-      return ResponseHandler.success(res, 'Admin updated successfully!', updatedAdmin);
+      return ResponseHandler.success(res, 'Admin updated successfully!',202, updatedAdmin.id);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message,500);
     }
   },
   async login(req: Request, res: Response) {
@@ -73,11 +73,7 @@ export const AdminController = {
   
     try {
       const result = await adminService.loginAdmin(email, password);
-      res.status(200).json({
-        message: 'Login successful',
-        token: result.token,
-        Admin: result.admin
-      });
+      return ResponseHandler.success(res, "Login Successful", 202)
     } catch (error: any) {
       res.status(401).json({ message: error.message });
     }
@@ -100,9 +96,9 @@ export const AdminController = {
     try {
       const id = Number(req.params.id);
       await adminService.deleteAdmin(id);
-      return ResponseHandler.success(res, 'Admin deleted successfully');
+      return ResponseHandler.success(res, 'Admin deleted successfully',204);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message, 500);
     }
   }
 };

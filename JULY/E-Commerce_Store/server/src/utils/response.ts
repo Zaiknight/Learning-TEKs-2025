@@ -1,20 +1,20 @@
 // src/utils/response.ts
 
 export class ResponseHandler {
-    static success(res:any, message: string, data: any = {}) {
-      return res.status(200).json({
-        code: 200,
+    static success(res:any, message: string, code: number, data: any = {}) {
+      return res.status(code).json({
+        code,
         status: "success",
         message,
         data,
       });
     }
   
-    static error(res: any, p0: string, code: number = 500) {
+    static error(res: any, message: string, code: number) {
       return res.status(code).json({
         code,
-        status: "error",
-        message:  "Something went wrong",
+        status: `Error: ${code}`,
+        message:  message,
       });
     }
     

@@ -2,13 +2,54 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { loginAdmin } from "@/api/auth.api"
+import { useNavigate } from "react-router-dom"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setEmailError(null);
+    setPasswordError(null);
+
+    let hasError = false;
+    if (!email) {
+      setEmailError("Email is required");
+      hasError = true;
+    }
+    if (!password) {
+      setPasswordError("Password is required");
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    const result = await loginAdmin(email, password);
+
+
+
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    localStorage.setItem("token", result.token);
+    navigate("/dashboard");
+  };
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -18,8 +59,10 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com"/>
+          <Input id="email" placeholder="m@example.com" value={email} onChange={(e) => {setEmail(e.target.value); setEmailError(null)}} className={cn(emailError && "ring-2 ring-red-500")}/>
+          {emailError && <p className="text-red-500">{emailError}</p>}
         </div>
+          
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
@@ -30,9 +73,11 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" />
+          <Input id="password" type="password" value={password} onChange={(e) => {setPassword(e.target.value); setPasswordError(null)}} className={cn(passwordError && "ring-2 ring-red-500")}/>
+          {passwordError && <p className="text-red-500">{passwordError}</p>}
         </div>
-        <Button type="submit" className="w-full">
+        {error && <p className="text-red-500">{error}</p>}
+        <Button type="submit" className="w-full cursor-pointer">
           Login
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">

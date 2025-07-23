@@ -26,7 +26,7 @@ export const adminService = {
     const admin = await adminRepository.findByEmail(adminData.email); 
   
     if (admin) {
-      throw new Error('admin Already exists');
+      throw new Error('Email already exists in directory,go to: Login');
     }
   
     adminData.password = await AuthUtil.hashPassword(adminData.password);
@@ -40,12 +40,12 @@ export const adminService = {
     const admin = await adminRepository.findByEmail(email); 
   
     if (!admin) {
-      throw new Error('admin Does not exist');
+      throw new Error('Admin does not exist');
     }
   
     const isValid = await AuthUtil.comparePasswords(password, admin.password);
     if (!isValid) {
-      throw new Error('Invalid credential');
+      throw new Error('Invalid Password');
     }else{
       console.log("Logged In");
     }
