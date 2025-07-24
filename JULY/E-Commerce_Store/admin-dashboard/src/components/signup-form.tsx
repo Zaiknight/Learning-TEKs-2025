@@ -27,18 +27,36 @@ export function SignUpForm({
 
   const navigate = useNavigate();
 
-  function clearFieldErrors() {
-    setFirstNameError(null);
-    setLastNameError(null);
-    setEmailError(null);
-    setPasswordError(null);
-    setConfirmPasswordError(null);
-  }
+  const handleChange = (field: string, value: string) => {
+    switch (field) {
+      case "firstName":
+        setFirstName(value.trim());
+        if (firstNameError) setFirstNameError(null);
+        break;
+      case "lastName":
+        setLastName(value.trim());
+        if (lastNameError) setLastNameError(null);
+        break;
+      case "email":
+        setEmail(value.trim());
+        if (emailError) setEmailError(null);
+        break;
+      case "password":
+        setPassword(value.trim())
+        if (passwordError) setPasswordError(null);
+        break;
+      case "confirmPassword":
+        setConfirmPassword(value.trim());
+        if (confirmPasswordError) setConfirmPasswordError(null);
+        break;
+      default:
+        break;
+    }
+  };
 
   const createAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    clearFieldErrors();
 
     let hasError = false;
     if (!firstName) {
@@ -73,17 +91,23 @@ export function SignUpForm({
 
     // Handle backend field validation errors
     if (result.validation_errors) {
+      // Reset all field errors before mapping new ones
+      setFirstNameError(null);
+      setLastNameError(null);
+      setEmailError(null);
+      setPasswordError(null);
+      setConfirmPasswordError(null);
+
       result.validation_errors.forEach((err: any) => {
-        if (err.path?.includes("first_name")) setFirstNameError(err.message);
-        if (err.path?.includes("last_name")) setLastNameError(err.message);
-        if (err.path?.includes("email")) setEmailError(err.message);
-        if (err.path?.includes("password")) setPasswordError(err.message);
+        if (err.path[0] === "first_name") setFirstNameError(err.message);
+        if (err.path[0] === "last_name") setLastNameError(err.message);
+        if (err.path[0] === "email") setEmailError(err.message);
+        if (err.path[0] === "password") setPasswordError(err.message);
+        if (err.path[0] === "confirmPassword") setConfirmPasswordError(err.message);
       });
-      setError(result.message);
       return;
     }
 
-    // Handle backend general errors
     if (result.error) {
       setError(result.error);
       return;
@@ -108,8 +132,7 @@ export function SignUpForm({
             id="firstname"
             placeholder="Jane"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            className={cn(firstNameError && "ring-2 ring-red-500")}
+            onChange={(e) => handleChange("firstName", e.target.value)}
           />
           {firstNameError && <p className="text-red-500">{firstNameError}</p>}
         </div>
@@ -119,8 +142,7 @@ export function SignUpForm({
             id="lastname"
             placeholder="Doe"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            className={cn(lastNameError && "ring-2 ring-red-500")}
+            onChange={(e) => handleChange("lastName", e.target.value)}
           />
           {lastNameError && <p className="text-red-500">{lastNameError}</p>}
         </div>
@@ -130,8 +152,7 @@ export function SignUpForm({
             id="email"
             placeholder="m@xyz.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={cn(emailError && "ring-2 ring-red-500")}
+            onChange={(e) => handleChange("email", e.target.value)}
           />
           {emailError && <p className="text-red-500">{emailError}</p>}
         </div>
@@ -141,8 +162,7 @@ export function SignUpForm({
             id="password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={cn(passwordError && "ring-2 ring-red-500")}
+            onChange={(e) => handleChange("password", e.target.value)}
           />
           {passwordError && <p className="text-red-500">{passwordError}</p>}
         </div>
@@ -152,12 +172,12 @@ export function SignUpForm({
             id="confirmPassword"
             type="password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className={cn(confirmPasswordError && "ring-2 ring-red-500")}
+            onChange={(e) => handleChange("confirmPassword", e.target.value)}
           />
           {confirmPasswordError && <p className="text-red-500">{confirmPasswordError}</p>}
         </div>
-        {error && <p className="text-red-500">{error}</p>}
+        {/* Only show error if it's a general error, NOT validation errors */}
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Creating..." : "Create Account"}
         </Button>

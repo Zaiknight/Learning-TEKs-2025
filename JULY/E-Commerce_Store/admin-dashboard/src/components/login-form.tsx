@@ -6,6 +6,16 @@ import { useState } from "react"
 import { loginAdmin } from "@/api/auth.api"
 import { useNavigate } from "react-router-dom"
 
+const createCookie = (name: string, value: string, days = 1) => {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days*24*60*60*1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+};
+
 export function LoginForm({
   className,
   ...props
@@ -35,17 +45,38 @@ export function LoginForm({
 
     if (hasError) return;
 
+
+    try{
     const result = await loginAdmin(email, password);
-
-
 
     if (result.error) {
       setError(result.error);
       return;
     }
 
-    localStorage.setItem("token", result.token);
-    navigate("/dashboard");
+
+    const token = result.token || result.data?.token;
+      const adminName = (result.admin?.first_name || result.admin?.name || result.data?.admin?.first_name || result.data?.admin?.name) + " " +(result.admin?.last_name || result.admin?.name || result.data?.admin?.last_name || result.data?.admin?.name);
+      const adminEmail = result.admin?.email || result.data?.admin?.email;
+      if (!token) {
+        setError("No token received, login failed.");
+        return;
+      }
+
+      createCookie("token", token, 1); // 1 days expiry
+
+      // Store admin name for welcome message
+      if (adminName) {
+        localStorage.setItem("adminName", adminName);
+      }
+      if (adminEmail) {
+        localStorage.setItem("adminEmail",adminEmail);
+      }
+
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Network error");
+    }
   };
 
   return (
@@ -59,7 +90,7 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" placeholder="m@example.com" value={email} onChange={(e) => {setEmail(e.target.value); setEmailError(null)}} className={cn(emailError && "ring-2 ring-red-500")}/>
+          <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => {setEmail(e.target.value); setEmailError(null)}} className={cn(emailError && "ring-2 ring-red-500")}/>
           {emailError && <p className="text-red-500">{emailError}</p>}
         </div>
           

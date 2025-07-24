@@ -2,10 +2,12 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt'; 
 import dotenv from 'dotenv';
+import { ResponseHandler } from './response';
 
+dotenv.config();
 
 const SALT_ROUNDS = 12;
-const JWT_KEY = process.env.JWT_KEY as string;
+const JWT_KEY = process.env.JWT_KEY as string || "YourVerySecretKey";
 
 export const AuthUtil = {
   // Hash plain password
@@ -21,8 +23,12 @@ export const AuthUtil = {
   },
 
   // Generate JWT token
-  generateToken(payload: { id: number; email: string }): string {
-    return jwt.sign(payload, JWT_KEY, { expiresIn: '1h' });
+  generateToken(payload: { id: number; email: string }): any{
+    try {
+      return jwt.sign(payload, JWT_KEY, { expiresIn: '1h' });
+    } catch (error) {
+      throw new Error("No Token Made")
+    }
   },
   
 

@@ -13,9 +13,9 @@ export const UserController = {
   async getAllUsers(req: Request, res: Response) {
     try {
       const users = await UserService.getAllUsers();
-      return ResponseHandler.success(res, 'Users fetched successfully', users);
+      return ResponseHandler.success(res, 'Users fetched successfully',200,users);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message, 401);
     }
   },
 
@@ -26,7 +26,7 @@ export const UserController = {
       if (!user) {
         return ResponseHandler.error(res, 'User not found', 404);
       }
-      return ResponseHandler.success(res, 'User fetched successfully', user);
+      return ResponseHandler.success(res, 'User fetched successfully',200, user.id);
     } catch (error:any) {
       return ResponseHandler.error(res, error.message, 401);
     }
@@ -39,9 +39,9 @@ export const UserController = {
       if (!user) {
         return ResponseHandler.error(res, 'User not found', 404);
       }
-      return ResponseHandler.success(res, 'User fetched successfully', user);
+      return ResponseHandler.success(res, 'User fetched successfully',200, user);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message,500);
     }
   },
 
@@ -49,10 +49,10 @@ export const UserController = {
     try {
       const parsedData = CreateUserDto.parse(req.body);
       const newUser = await UserService.createUser(parsedData);
-      return ResponseHandler.success(res, 'User created successfully!', newUser);
+      return ResponseHandler.success(res, 'User created successfully!',201, newUser);
     } catch (error:any) {
       console.log(error);
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message,500);
     }
   },
 
@@ -64,9 +64,9 @@ export const UserController = {
       if (!updatedUser) {
         return ResponseHandler.error(res, 'User not found', 404);
       }
-      return ResponseHandler.success(res, 'User updated successfully!', updatedUser);
+      return ResponseHandler.success(res, 'User updated successfully!',201, updatedUser);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message,500);
     }
   },
   async login(req: Request, res: Response) {
@@ -101,9 +101,9 @@ export const UserController = {
     try {
       const id = Number(req.params.id);
       await UserService.deleteUser(id);
-      return ResponseHandler.success(res, 'User deleted successfully');
+      return ResponseHandler.success(res, 'User deleted successfully',202);
     } catch (error:any) {
-      return ResponseHandler.error(res, error.message);
+      return ResponseHandler.error(res, error.message,500);
     }
   }
 };

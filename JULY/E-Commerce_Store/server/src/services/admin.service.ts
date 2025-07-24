@@ -2,6 +2,7 @@
 import {Admin} from '../models/admin.model';
 import { AdminRepository } from '../repositories/admin.repository';
 import { AuthUtil } from '../utils/auth.util';
+import { ResponseHandler } from '../utils/response';
 
 
 const adminRepository = new AdminRepository();
@@ -35,7 +36,7 @@ export const adminService = {
     return createdadmin;
   },
 
-  async loginAdmin(email: string, password: string) {
+  async loginAdmin(email: string, password: string, res:any) {
 
     const admin = await adminRepository.findByEmail(email); 
   
@@ -46,13 +47,14 @@ export const adminService = {
     const isValid = await AuthUtil.comparePasswords(password, admin.password);
     if (!isValid) {
       throw new Error('Invalid Password');
-    }else{
-      console.log("Logged In");
     }
-  
-    const token = AuthUtil.generateToken({ id: admin.id, email: admin.email });
-    
-    return { admin,token };
+    try {
+      const token = AuthUtil.generateToken({ id: admin.id, email: admin.email });
+      return ResponseHandler.success(res, "Login Successful", 202, {admin, token});
+    } catch (error : any) {
+      return ResponseHandler.error(res, error , 401)
+    }
+   
   },
 
   async updateAdmin(id: number, updates:any): Promise<Admin | null> {

@@ -1,3 +1,4 @@
+
 const API_BASE_URL = "http://localhost:5000"; 
 
 export const loginAdmin = async (email: string, password: string) => {
@@ -43,7 +44,11 @@ export const createAdmin = async (
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      return { error: data?.error || data?.message || "Failed to create admin" };
+
+      return {
+        error: data?.error || data?.message,
+        validation_errors: data?.validation_errors || undefined
+      };
     }
     return data;
   } catch (err: any) {

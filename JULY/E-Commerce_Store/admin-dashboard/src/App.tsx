@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./routes/login/login";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import Signup from "./routes/signup/signup";
+import UsersPage from "./routes/users/UsersPage";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route element={<ProtectedRoutes/>}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/users" element={<UsersPage />} />
             </Route>
           </Routes>
       </ThemeProvider>

@@ -26,6 +26,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { Button } from "./ui/button"
+import { deleteCookie } from "./cookieUsage"
 
 export function NavUser({
   user,
@@ -38,6 +40,13 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
 
+  const handleLogout = () => {
+    deleteCookie("token");
+    localStorage.removeItem("token");
+    localStorage.removeItem("adminName");
+    localStorage.removeItem("adminEmail");
+  };
+  
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -97,8 +106,18 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <IconLogout />
-              Log out
+              <Button
+                variant="ghost"
+                asChild
+                size="sm"
+                className="hidden sm:flex"
+                onClick={handleLogout}
+              >
+                <a href="/" className="dark:text-foreground">
+                  <IconLogout />
+                  Log Out
+                </a>
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

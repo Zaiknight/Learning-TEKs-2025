@@ -2,7 +2,8 @@
 import { Request, Response } from 'express';
 import { adminService } from '../services/admin.service';
 import { ResponseHandler } from '../utils/response'; // Import the response utility
-import { CreateAdminDto,UpdateAdminDto } from '../models/admin.model';
+import { UpdateAdminDto } from '../models/admin.model';
+import { UserValidation } from '../utils/SignUpValidation';
 
 interface AuthenticatedRequest extends Request {
   Admin?: any;
@@ -45,20 +46,14 @@ export const AdminController = {
   },
 
   async createAdmin(req: Request, res: Response) {
-    try {
-      const parsedData = CreateAdminDto.parse(req.body);
-      const newAdmin = await adminService.createAdmin(parsedData);
-      return ResponseHandler.success(res, 'Admin created successfully!',201, newAdmin.id);
-    } catch (error:any) {
-      console.log(error);
-      return ResponseHandler.validationError(res, error.message);
-    }
+      await UserValidation.validateAccountCreation(req.body, "admin", res);
   },
+
 
   async updateAdmin(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const parsedData = UpdateAdminDto.parse(req.body);
+      const parsedData = UpdateAdminDto.parse(req.body); 
       const updatedAdmin = await adminService.updateAdmin(id, parsedData);
       if (!updatedAdmin) {
         return ResponseHandler.error(res, 'Admin not found', 404);
@@ -72,8 +67,7 @@ export const AdminController = {
     const { email, password } = req.body;
   
     try {
-      const result = await adminService.loginAdmin(email, password);
-      return ResponseHandler.success(res, "Login Successful", 202)
+      await adminService.loginAdmin(email, password, res);
     } catch (error: any) {
       res.status(401).json({ message: error.message });
     }
