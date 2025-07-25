@@ -1,27 +1,10 @@
 import { z, ZodError } from "zod";
-import { ResponseHandler } from "./response";
+import { ResponseHandler } from "../utils/response";
 import { adminService } from "../services/admin.service";
 import { Response } from "express";
+import { adminSchema } from "../schema/admin.schema";
+import { userSchema } from "../schema/user.schema";
 
-const userSchema = z.object({
-  first_name: z.string().min(3, "First name is required"),
-  last_name: z.string().min(3, "Last name is required"),
-  email: z.string().email("Email must contain @ and . symbols"),
-  password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .refine(
-      (password) => /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password),
-      { message: "Password must contain uppercase, lowercase, and number" }
-    ),
-});
-
-const adminSchema = userSchema.extend({
-  role: z.string(),
-});
-
-function extractZodMessages(error: ZodError) {
-  return error.issues.map(({ path, message }) => ({ path, message }));
-}
 
 export const UserValidation = {
   async validateAccountCreation(accountData: any, accountType: string, res: Response) {
@@ -48,7 +31,7 @@ export const UserValidation = {
         console.log("Validation Errors: ",  messages);
         return ResponseHandler.validationError(res, messages);
       }
-     // return ResponseHandler.error(res, error.message, 422);
+     return ResponseHandler.error(res, error.message, 422);
     }
   }
 }

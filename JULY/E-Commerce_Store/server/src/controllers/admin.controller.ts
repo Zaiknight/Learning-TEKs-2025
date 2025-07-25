@@ -1,9 +1,9 @@
 // server/src/controllers/admin.controller.ts
 import { Request, Response } from 'express';
 import { adminService } from '../services/admin.service';
-import { ResponseHandler } from '../utils/response'; // Import the response utility
+import { ResponseHandler } from '../utils/response'; 
 import { UpdateAdminDto } from '../models/admin.model';
-import { UserValidation } from '../utils/SignUpValidation';
+import { UserValidation } from '../validation/registration.validation';
 
 interface AuthenticatedRequest extends Request {
   Admin?: any;
@@ -78,7 +78,6 @@ export const AdminController = {
       if (!req.Admin) {
         return res.status(401).json({ message: 'Unauthorized: No Admin found in token' });
       }
-
       const Admin = req.Admin; // from middleware
       res.status(200).json({ message: "Profile fetched successfully", Admin });
     } catch (error) {

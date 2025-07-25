@@ -1,5 +1,7 @@
+import { Response } from "express";
+
 export class ResponseHandler {
-  static success(res: any, message: string, code: number, data: any = {}) {
+  static success(res: Response, message: string, code: number, data: any = {}) {
     return res.status(code).json({
       code,
       status: "success",
@@ -8,7 +10,7 @@ export class ResponseHandler {
     });
   }
 
-  static error(res: any, message: string, code: number) {
+  static error(res: Response, message: string, code: number) {
     return res.status(code).json({
       code,
       status: `error`,
@@ -16,7 +18,7 @@ export class ResponseHandler {
     });
   }
 
-  static validationError(res: any, errors: { path: any; message: string }[], code : number = 422) {
+  static validationError(res: Response, errors: { path: any; message: string }[], code : number = 422) {
     return res.status(code).json({
       code: code,
       status: errors,
@@ -25,7 +27,7 @@ export class ResponseHandler {
     });
   }
 
-  static unauthorized(res: any, message = "Unauthorized") {
+  static unauthorized(res: Response, message = "Unauthorized") {
     return res.status(401).json({
       code: 401,
       status: "error",

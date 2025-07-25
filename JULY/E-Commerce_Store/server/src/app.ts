@@ -13,6 +13,7 @@ import morgan from 'morgan';
 import { NotFoundHandler, ErrorHandler } from './middleware/error.middleware';
 import userRoutes from './routes/user.routes';
 import adminRoutes from './routes/admin.routes';
+import categoryRoutes from "./routes/category.routes";
 //import productRoutes from './routes/product.routes';
 
 
@@ -24,6 +25,7 @@ app.use(express.json()); // Parse incoming JSON
 app.use(morgan('dev')); // Log requests
 app.use('/users', userRoutes);
 app.use('/admins',adminRoutes);
+app.use("/categories",categoryRoutes);
 app.use(NotFoundHandler);
 app.use(ErrorHandler);
 
