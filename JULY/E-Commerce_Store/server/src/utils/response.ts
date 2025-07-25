@@ -4,7 +4,7 @@ export class ResponseHandler {
   static success(res: Response, message: string, code: number, data: any = {}) {
     return res.status(code).json({
       code,
-      status: "success",
+      status: "Success",
       message,
       data,
     });

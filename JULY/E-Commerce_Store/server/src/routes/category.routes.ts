@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/",CategoryController.getAll);
 router.get("/:id", CategoryController.getById);
-router.get("/:name", CategoryController.getByName);
+router.get("/name/:name", CategoryController.getByName);
 
 router.post("/", CategoryController.create);
 

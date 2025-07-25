@@ -5,12 +5,12 @@ import { CategoryValidation } from '../validation/category.validation';
 
 
 export const CategoryController = {
-    async getAll(res: Response) {
+    async getAll( req: Request, res: Response) {
         try {
             const categories = await categoryService.getAll();
             return ResponseHandler.success(res, "Categories Fetched Successfully", 200, categories);
-        } catch (error : any) {
-            return ResponseHandler.error(res, error.message, 500);
+        } catch (error) {
+            return ResponseHandler.error(res, "Unable to fetch categories", 422);
         }
     },
 
@@ -41,7 +41,7 @@ export const CategoryController = {
     },
 
     async create(req: Request, res : Response){
-        await CategoryValidation.validateCreate(req.body, res);
+        await CategoryValidation.create(req.body, res);
     },
 
     async update(req: Request, res : Response) {

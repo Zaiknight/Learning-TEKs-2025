@@ -14,7 +14,7 @@ import { NotFoundHandler, ErrorHandler } from './middleware/error.middleware';
 import userRoutes from './routes/user.routes';
 import adminRoutes from './routes/admin.routes';
 import categoryRoutes from "./routes/category.routes";
-//import productRoutes from './routes/product.routes';
+import productRoutes from "./routes/product.routes";
 
 
 const app = express();
@@ -26,6 +26,7 @@ app.use(morgan('dev')); // Log requests
 app.use('/users', userRoutes);
 app.use('/admins',adminRoutes);
 app.use("/categories",categoryRoutes);
+app.use("/products",productRoutes);
 app.use(NotFoundHandler);
 app.use(ErrorHandler);
 

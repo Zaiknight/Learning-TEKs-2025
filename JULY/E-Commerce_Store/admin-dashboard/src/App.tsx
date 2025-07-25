@@ -5,6 +5,7 @@ import Login from "./routes/login/login";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import Signup from "./routes/signup/signup";
 import UsersPage from "./routes/users/UsersPage";
+import CategoriesPage from "./routes/categories/CategoriesPage";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route element={<ProtectedRoutes/>}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/categories" element={<CategoriesPage />} />
             </Route>
           </Routes>
       </ThemeProvider>

@@ -1,19 +1,17 @@
-import { ZodError } from "zod";
-import { categorySchema } from "../schema/category.schema"
-import { categoryService } from "../services/category.service";
-import { ResponseHandler } from "../utils/response";
 import { Response } from "express";
+import { productSchema } from "../schema/product.schema";
+import { productService } from "../services/product.service";
+import { ResponseHandler } from "../utils/response";
+import { ZodError } from "zod";
 
-
-
-export const CategoryValidation = {
-    async create(category : any, res : Response) {
+export const ProductValidation = {
+    async add(product: any, res: Response) {
         try {
-            const validatedData = categorySchema.parse(category);
-            console.log("Validation Successful: ", validatedData);   
-            const newCategory = await categoryService.create(validatedData);
-            return ResponseHandler.success(res, "Category Created!", 200, newCategory);         
-        } catch (error:any) {
+            const validatedProduct = productSchema.parse(product);
+            console.log("Validation Successful: ", validatedProduct);
+            const newProduct = await productService.create(validatedProduct);
+            return ResponseHandler.success(res, "Product Added!", 200, newProduct);
+        } catch (error : any) {
             if (error instanceof ZodError) {
                 const messages = error.issues.map(issue => ({
                   path: issue.path,      
@@ -25,13 +23,12 @@ export const CategoryValidation = {
              return ResponseHandler.error(res, error.message, 422);
         }
     },
-
-    async validateEdit(id : number,update : any, res : Response) {
+    async edit(id : number,update : any, res : Response) {
         try {
-            const updatedData = categorySchema.partial().parse(update);
+            const updatedData = productSchema.partial().parse(update);
             console.log("Validation Successful: ", updatedData);   
-            const updatedCategory = await categoryService.edit(id, updatedData);
-            return ResponseHandler.success(res, "Updated Category!", 200, updatedCategory);
+            const updatedProduct = await productService.edit(id, updatedData);
+            return ResponseHandler.success(res, "Updated Category!", 200, updatedProduct);
         } catch (error:any) {
             if (error instanceof ZodError) {
                 const messages = error.issues.map(issue => ({
