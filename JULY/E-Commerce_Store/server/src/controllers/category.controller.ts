@@ -8,6 +8,11 @@ export const CategoryController = {
     async getAll( req: Request, res: Response) {
         try {
             const categories = await categoryService.getAll();
+
+            const fullCategory = categories.map((category : any) => ({
+                ...categories,
+                img_path: `${req.protocol}://${req.get("host")}/uploads/${category.img_path}`
+            }));
             return ResponseHandler.success(res, "Categories Fetched Successfully", 200, categories);
         } catch (error) {
             return ResponseHandler.error(res, "Unable to fetch categories", 422);
@@ -41,7 +46,17 @@ export const CategoryController = {
     },
 
     async create(req: Request, res : Response){
-        await CategoryValidation.create(req.body, res);
+        try {
+            const imagePath = req.file ? `${req.file.filename}` : null;
+            if(!imagePath){
+                return ResponseHandler.error(res, "Image file is required",422);
+            }
+            const payload = {...req.body, img_name: imagePath};
+            await CategoryValidation.create(payload,res);
+        } catch (error :any) {
+            return ResponseHandler.error(res, error.message, 500)
+        }
+
     },
 
     async update(req: Request, res : Response) {

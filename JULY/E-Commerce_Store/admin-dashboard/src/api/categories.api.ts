@@ -1,9 +1,7 @@
 const API_BASE_URL = "http://localhost:5000"; 
 
-
-
 export const CategoryAPI = {
-    
+
     async fetchCategories() {
         try {
             const response = await fetch(`${API_BASE_URL}/categories`, {
@@ -16,16 +14,14 @@ export const CategoryAPI = {
                 throw new Error("Failed to fetch categories");
             }
             const result = await response.json();
-            // Backend returns { code, status, message, data: [...] }
             if (Array.isArray(result)) return result;
             if (result && Array.isArray(result.data)) {
-                // Map backend fields to frontend fields
                 return result.data.map((cat: any) => ({
                     id: cat.id,
                     name: cat.name,
                     description: cat.description,
                     active: cat.active,
-                    image: cat.img_name, // map img_name to image
+                    image: cat.img_name, 
                 }));
             }
             return [];
@@ -66,7 +62,7 @@ export const CategoryAPI = {
     },
 
     // Get category by Name
-    async fetchCategoryByName (name: string) {
+    async fetchCategoryByName(name: string) {
         try {
             const response = await fetch(`${API_BASE_URL}/categories/name/${encodeURIComponent(name)}`, {
                 method: "GET",
@@ -96,25 +92,22 @@ export const CategoryAPI = {
     },
 
     // Create new category
-    async createCategory (category: {
+    async createCategory(category: {
         name: string;
         description: string;
         active: boolean;
-        image: string;
+        img_name: File;
     }) {
         try {
-            const backendCategory = {
-                name: category.name,
-                description: category.description,
-                active: category.active,
-                img_name: category.image,
-            };
+            const formData = new FormData();
+            formData.append("name", category.name);
+            formData.append("description", category.description);
+            formData.append("active", String(category.active));
+            formData.append("image", category.img_name);
+
             const response = await fetch(`${API_BASE_URL}/categories`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(backendCategory),
+                body: formData,
             });
             if (!response.ok) {
                 throw new Error("Failed to create category");
@@ -138,7 +131,7 @@ export const CategoryAPI = {
     },
 
     // Update category by ID
-    async updateCategory  (
+    async updateCategory(
         id: number | string,
         category: {
             name?: string;
@@ -185,7 +178,7 @@ export const CategoryAPI = {
     },
 
     // Delete category by ID
-    async deleteCategory(id: number | string){
+    async deleteCategory(id: number | string) {
         try {
             const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
                 method: "DELETE",

@@ -302,21 +302,21 @@ export default function ProductsPage() {
 
   async function handleCategorySubmit(e: React.FormEvent) {
     e.preventDefault();
-    let imageFileName = "";
 
-    if (categoryForm.image && typeof categoryForm.image !== "string") {
-      const data = new FormData();
-      data.append("image", categoryForm.image);
-      const res = await fetch("http://localhost:5000/", {
-        method: "POST",
-        body: data,
-      });
-      const json = await res.json();
-      imageFileName = json.filename;
-    }
+    let imageFileName = form.image as File;
+      if (form.image && typeof form.image !== "string") {
+        const uploadData = new FormData();
+        uploadData.append("image", form.image);
+        const res = await fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: uploadData,
+        });
+        const json = await res.json();
+        imageFileName = json.filename;
+      }
     const newCat = await CategoryAPI.createCategory({
       ...categoryForm,
-      image: imageFileName,
+      img_name: imageFileName,
     });
 
     await loadCategories();
@@ -460,17 +460,23 @@ export default function ProductsPage() {
                               />
                             </TableCell>
                             <TableCell>
-                                <img
-                                  src={
-                                    product.image
-                                      ? product.image.startsWith("/productUploads/")
-                                        ? `http://localhost:5000/upload/${product.image.replace("/productUploads/", "")}`
-                                        : `http://localhost:5000/upload/${product.image}`
-                                      : "/placeholder.svg?height=40&width=40"
-                                  }
-                                  alt={product.name}
-                                  className="w-10 h-10 rounded object-cover"
-                                />
+                                <div className="flex items-center gap-3">
+                                  <img
+                                    src={
+                                      product.image
+                                        ? product.image.startsWith("/productUploads/")
+                                          ? `http://localhost:5000/upload/${product.image.replace("/productUploads/", "")}`
+                                          : `http://localhost:5000/upload/${product.image}`
+                                        : "/placeholder.svg?height=40&width=40"
+                                    }
+                                    alt={product.name}
+                                    className="w-10 h-10 rounded object-cover"
+                                  />
+                                  <div>
+                                    <div className="font-medium">{product.name}</div>
+                                    <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
+                                  </div>
+                                </div>
                               </TableCell>
                             <TableCell className="font-medium">
                               Rs.{product.price.toFixed(2)}

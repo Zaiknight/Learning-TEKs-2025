@@ -57,7 +57,7 @@ export const ProductController = {
     
             await ProductValidation.add(payload, res);
         } catch (error : any) {
-            return ResponseHandler.error(res, error.message, 401)
+            return ResponseHandler.error(res, error.message, 500)
         }    
     },
 

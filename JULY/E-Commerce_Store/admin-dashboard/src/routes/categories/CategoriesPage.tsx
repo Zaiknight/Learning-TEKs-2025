@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Search, MoreHorizontal, Plus} from "lucide-react"
+import { Search, MoreHorizontal, Plus } from "lucide-react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -20,7 +20,7 @@ type Category = {
   name: string
   description: string
   active: boolean
-  image: string
+  image: string // This is the filename stored in DB
 }
 
 export default function CategoriesPage() {
@@ -34,6 +34,7 @@ export default function CategoriesPage() {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [statusFilter, setStatusFilter] = React.useState<string>("all")
 
+  // Hold file object or string (for File input)
   const [form, setForm] = React.useState({
     name: "",
     description: "",
@@ -105,7 +106,7 @@ export default function CategoriesPage() {
       name: category.name,
       description: category.description,
       active: category.active,
-      image: "",
+      image: "", // Always clear on edit
     })
     setIsEdit(true)
     setEditingId(category.id)
@@ -125,23 +126,42 @@ export default function CategoriesPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const imageFileName : string = '';
-    // Optionally handle image upload here if needed
+    let fileToSend = typeof form.image === "string" ? undefined : form.image
 
     if (isEdit && editingId) {
-      await CategoryAPI.updateCategory(editingId, {
-        name: form.name,
-        description: form.description,
-        active: form.active,
-        ...(imageFileName && { image: imageFileName }),
-      })
+      if (fileToSend) {
+        // If editing and uploading new image, handle as create (FormData)
+        await CategoryAPI.createCategory({
+          name: form.name,
+          description: form.description,
+          active: form.active,
+          img_name: fileToSend,
+        })
+      } else {
+        // If editing and no new image, just update info
+        await CategoryAPI.updateCategory(editingId, {
+          name: form.name,
+          description: form.description,
+          active: form.active,
+        })
+      }
     } else {
-      await CategoryAPI.createCategory({
-        name: form.name,
-        description: form.description,
-        active: form.active,
-        image: imageFileName,
-      })
+      if (fileToSend) {
+        await CategoryAPI.createCategory({
+          name: form.name,
+          description: form.description,
+          active: form.active,
+          img_name: fileToSend,
+        })
+      } else {
+        // Should not happen, but for safety:
+        await CategoryAPI.createCategory({
+          name: form.name,
+          description: form.description,
+          active: form.active,
+          img_name: "" as any,
+        })
+      }
     }
 
     setOpen(false)
@@ -200,6 +220,13 @@ export default function CategoriesPage() {
     }
   }
 
+  // Helper: build image URL from filename or show placeholder
+  function getCategoryImageUrl(img: string) {
+    if (!img) return "/placeholder.svg?height=40&width=40"
+  const filename = img.startsWith("/productUploads/") ? img.replace("/productUploads/", "") : img
+    return `http://localhost:5000/upload/${filename}`
+  }
+
   return (
     <SidebarProvider
       style={
@@ -246,7 +273,6 @@ export default function CategoriesPage() {
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
-
               </div>
 
               {/* Table */}
@@ -288,7 +314,7 @@ export default function CategoriesPage() {
                             <TableCell>
                               <div className="flex items-center gap-3">
                                 <img
-                                  src={category.image || "/placeholder.svg?height=40&width=40"}
+                                  src={getCategoryImageUrl(category.image)}
                                   alt={category.name}
                                   className="w-10 h-10 rounded object-cover"
                                 />

@@ -28,7 +28,7 @@ app.use('/admins',adminRoutes);
 app.use("/categories",categoryRoutes);
 app.use("/products",productRoutes);
 //image files are in: public/uploads/
-app.use('/upload', express.static('public/productUploads'));
+app.use('/upload', express.static('public/uploads'));
 app.use(NotFoundHandler);
 app.use(ErrorHandler);
 
