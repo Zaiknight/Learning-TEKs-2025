@@ -5,5 +5,6 @@ export const productSchema = z.object({
     name: z.string().min(3, "Product name is too short"),
     description: z.string().min(20, "Description must be atleast 20 characters."),
     img_name: z.string(),
-    price: z.number().min(1, "Please set a Price")
+    price: z.number().min(1, "Please set a Price"),
+    stock: z.number(),
 })
