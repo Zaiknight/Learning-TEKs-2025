@@ -1,13 +1,11 @@
-"use client"
-
-import * as React from "react"
-import { Search, MoreHorizontal, Plus } from "lucide-react"
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+import * as React from "react";
+import { Search, MoreHorizontal, Plus } from "lucide-react";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableHeader,
@@ -15,7 +13,7 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -23,56 +21,56 @@ import {
   DialogTitle,
   DialogClose,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
-import { ProductAPI } from "@/api/products.api"
-import { CategoryAPI } from "@/api/categories.api"
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { ProductAPI } from "@/api/products.api";
+import { CategoryAPI } from "@/api/categories.api";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 type Product = {
-  id: number
-  category_id: number
-  name: string
-  description: string
-  active: boolean
-  image: string
-  price: number
-  stock: number
-}
+  id: number;
+  category_id: number;
+  name: string;
+  description: string;
+  active: boolean;
+  image: string;
+  price: number;
+  stock: number;
+};
 
 type Category = {
-  id: number
-  name: string
-  description: string
-  active: boolean
-  image: string
-}
+  id: number;
+  name: string;
+  description: string;
+  active: boolean;
+  image: string;
+};
 
 export default function ProductsPage() {
-  const [products, setProducts] = React.useState<Product[]>([])
-  const [filteredProducts, setFilteredProducts] = React.useState<Product[]>([])
-  const [categories, setCategories] = React.useState<Category[]>([])
-  const [loading, setLoading] = React.useState(false)
-  const [open, setOpen] = React.useState(false)
-  const [isEdit, setIsEdit] = React.useState(false)
-  const [editingId, setEditingId] = React.useState<number | null>(null)
-  const [selectedProducts, setSelectedProducts] = React.useState<number[]>([])
-  const [searchQuery, setSearchQuery] = React.useState("")
-  const [categoryFilter, setCategoryFilter] = React.useState<string>("all")
-  const [priceFilter, setPriceFilter] = React.useState<string>("all")
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = React.useState<Product[]>([]);
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [isEdit, setIsEdit] = React.useState(false);
+  const [editingId, setEditingId] = React.useState<number | null>(null);
+  const [selectedProducts, setSelectedProducts] = React.useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [categoryFilter, setCategoryFilter] = React.useState<string>("all");
+  const [priceFilter, setPriceFilter] = React.useState<string>("all");
 
   const [form, setForm] = React.useState({
     category_id: 0,
@@ -81,77 +79,79 @@ export default function ProductsPage() {
     image: "" as File | string,
     price: 0,
     stock: 0 as number,
-  })
+  });
 
-  const [deletingId, setDeletingId] = React.useState<number | null>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
+  const [deletingId, setDeletingId] = React.useState<number | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
 
   // Category modal state
-  const [categoryModalOpen, setCategoryModalOpen] = React.useState(false)
+  const [categoryModalOpen, setCategoryModalOpen] = React.useState(false);
   const [categoryForm, setCategoryForm] = React.useState({
     name: "",
     description: "",
     active: true,
     image: "" as File | string,
-  })
+  });
 
   React.useEffect(() => {
-    loadProducts()
-    loadCategories()
-  }, [])
+    loadProducts();
+    loadCategories();
+  }, []);
 
   React.useEffect(() => {
-    filterProducts()
-  }, [products, searchQuery, categoryFilter, priceFilter])
+    filterProducts();
+  }, [products, searchQuery, categoryFilter, priceFilter]);
 
   async function loadProducts() {
-    setLoading(true)
+    setLoading(true);
     try {
-      const data = await ProductAPI.fetchProduct()
-      setProducts(Array.isArray(data) ? data : [])
+      const data = await ProductAPI.fetchProduct();
+      setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function loadCategories() {
     try {
-      const data = await CategoryAPI.fetchCategories()
-      setCategories(Array.isArray(data) ? data : [])
+      const data = await CategoryAPI.fetchCategories();
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   function filterProducts() {
-    let filtered = products
+    let filtered = products;
 
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (product) =>
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
+          product.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
     // Category filter
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((product) => product.category_id === Number.parseInt(categoryFilter))
+      filtered = filtered.filter(
+        (product) => product.category_id === Number.parseInt(categoryFilter)
+      );
     }
 
     // Price filter
     if (priceFilter !== "all") {
       filtered = filtered.filter((product) => {
-        if (priceFilter === "0-100") return product.price >= 0 && product.price <= 1000
-        if (priceFilter === "100-500") return product.price > 1000 && product.price <= 5000
-        if (priceFilter === "500000+") return product.price > 5000
-        return true
-      })
+        if (priceFilter === "0-100") return product.price >= 0 && product.price <= 1000;
+        if (priceFilter === "100-500") return product.price > 1000 && product.price <= 5000;
+        if (priceFilter === "500000+") return product.price > 5000;
+        return true;
+      });
     }
 
-    setFilteredProducts(filtered)
+    setFilteredProducts(filtered);
   }
 
   function handleOpen() {
@@ -162,10 +162,10 @@ export default function ProductsPage() {
       image: "",
       price: 0,
       stock: 0,
-    })
-    setIsEdit(false)
-    setEditingId(null)
-    setOpen(true)
+    });
+    setIsEdit(false);
+    setEditingId(null);
+    setOpen(true);
   }
 
   function handleEdit(product: Product) {
@@ -176,84 +176,97 @@ export default function ProductsPage() {
       image: "",
       price: product.price,
       stock: product.stock,
-    })
-    setIsEdit(true)
-    setEditingId(product.id)
-    setOpen(true)
+    });
+    setIsEdit(true);
+    setEditingId(product.id);
+    setOpen(true);
   }
 
-  function handleFormChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const { name, value, type, checked, files } = e.target as any
+  function handleFormChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value, type, checked, files } = e.target as any;
     if (type === "checkbox") {
-      setForm((prev) => ({ ...prev, [name]: checked }))
+      setForm((prev) => ({ ...prev, [name]: checked }));
     } else if (type === "file") {
-      setForm((prev) => ({ ...prev, image: files[0] }))
+      setForm((prev) => ({ ...prev, image: files[0] }));
     } else if (name === "price") {
-      setForm((prev) => ({ ...prev, price: Number(value) }))
+      setForm((prev) => ({ ...prev, price: Number(value) }));
     } else if (name === "stock") {
-      setForm((prev) => ({ ...prev, stock: Number(value) }))
+      setForm((prev) => ({ ...prev, stock: Number(value) }));
     } else {
-      setForm((prev) => ({ ...prev, [name]: value }))
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
   }
 
   function handleCategorySelect(value: string) {
     if (value === "create-new-category") {
-      setCategoryModalOpen(true)
+      setCategoryModalOpen(true);
     } else {
-      setForm((prev) => ({ ...prev, category_id: Number(value) }))
+      setForm((prev) => ({ ...prev, category_id: Number(value) }));
     }
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    let imageFileName = ""
-
+    e.preventDefault();
 
     if (isEdit && editingId) {
+      // For updating, handle file upload if needed
+      let imageFileName = form.image;
+      if (form.image && typeof form.image !== "string") {
+        // If a new file is selected, upload first
+        const uploadData = new FormData();
+        uploadData.append("image", form.image);
+        const res = await fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: uploadData,
+        });
+        const json = await res.json();
+        imageFileName = json.filename;
+      }
       await ProductAPI.update(editingId, {
         category_id: form.category_id,
         name: form.name,
         description: form.description,
-        image: imageFileName,
+        img_name: form.image as File,
         price: form.price,
         stock: form.stock,
-      })
+      });
     } else {
       await ProductAPI.create({
         id: 0,
         category_id: form.category_id,
         name: form.name,
         description: form.description,
-        image: imageFileName,
+        img_name: form.image as File,
         price: form.price,
         stock: form.stock,
-      })
+      });
     }
-    setOpen(false)
-    setIsEdit(false)
-    setEditingId(null)
-    loadProducts()
+    setOpen(false);
+    setIsEdit(false);
+    setEditingId(null);
+    loadProducts();
   }
 
   function handleDeleteClick(id: number) {
-    setDeletingId(id)
-    setDeleteDialogOpen(true)
+    setDeletingId(id);
+    setDeleteDialogOpen(true);
   }
 
   async function handleDeleteConfirm() {
     if (deletingId) {
-      setDeleteDialogOpen(false)
-      await ProductAPI.delete(deletingId)
-      setDeletingId(null)
-      loadProducts()
+      setDeleteDialogOpen(false);
+      await ProductAPI.delete(deletingId);
+      setDeletingId(null);
+      loadProducts();
     }
   }
 
   function handleDialogClose() {
-    setOpen(false)
-    setIsEdit(false)
-    setEditingId(null)
+    setOpen(false);
+    setIsEdit(false);
+    setEditingId(null);
     setForm({
       category_id: categories[0]?.id || 0,
       name: "",
@@ -261,74 +274,85 @@ export default function ProductsPage() {
       image: "",
       price: 0,
       stock: 0,
-    })
+    });
   }
 
   function handleCategoryModalClose() {
-    setCategoryModalOpen(false)
+    setCategoryModalOpen(false);
     setCategoryForm({
       name: "",
       description: "",
       active: true,
       image: "",
-    })
+    });
   }
 
-  function handleCategoryFormChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const { name, value, type, checked, files } = e.target as any
+  function handleCategoryFormChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value, type, checked, files } = e.target as any;
     if (type === "checkbox") {
-      setCategoryForm((prev) => ({ ...prev, [name]: checked }))
+      setCategoryForm((prev) => ({ ...prev, [name]: checked }));
     } else if (type === "file") {
-      setCategoryForm((prev) => ({ ...prev, image: files[0] }))
+      setCategoryForm((prev) => ({ ...prev, image: files[0] }));
     } else {
-      setCategoryForm((prev) => ({ ...prev, [name]: value }))
+      setCategoryForm((prev) => ({ ...prev, [name]: value }));
     }
   }
 
   async function handleCategorySubmit(e: React.FormEvent) {
-    e.preventDefault()
-    let imageFileName = ""
+    e.preventDefault();
+    let imageFileName = "";
 
-
+    if (categoryForm.image && typeof categoryForm.image !== "string") {
+      const data = new FormData();
+      data.append("image", categoryForm.image);
+      const res = await fetch("http://localhost:5000/", {
+        method: "POST",
+        body: data,
+      });
+      const json = await res.json();
+      imageFileName = json.filename;
+    }
     const newCat = await CategoryAPI.createCategory({
       ...categoryForm,
       image: imageFileName,
-    })
+    });
 
-    await loadCategories()
-    setCategoryModalOpen(false)
+    await loadCategories();
+    setCategoryModalOpen(false);
     setCategoryForm({
       name: "",
       description: "",
       active: true,
       image: "",
-    })
+    });
 
     if (newCat && newCat.id) {
-      setForm((prev) => ({ ...prev, category_id: newCat.id }))
+      setForm((prev) => ({ ...prev, category_id: newCat.id }));
     }
   }
 
   function getCategoryName(category_id: number) {
-    const category = categories.find(cat => cat.id === category_id)
-    return category ? category.name : ""
+    const category = categories.find((cat) => cat.id === category_id);
+    return category ? category.name : "";
   }
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedProducts(filteredProducts.map((p) => p.id))
+      setSelectedProducts(filteredProducts.map((p) => p.id));
     } else {
-      setSelectedProducts([])
+      setSelectedProducts([]);
     }
-  }
+  };
 
   const handleSelectProduct = (productId: number, checked: boolean) => {
     if (checked) {
-      setSelectedProducts([...selectedProducts, productId])
+      setSelectedProducts([...selectedProducts, productId]);
     } else {
-      setSelectedProducts(selectedProducts.filter((id) => id !== productId))
+      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
     }
-  }
+  };
 
   return (
     <SidebarProvider
@@ -391,7 +415,6 @@ export default function ProductsPage() {
                     <SelectItem value="500000+">Rs.5000+</SelectItem>
                   </SelectContent>
                 </Select>
-
               </div>
 
               {/* Table */}
@@ -411,7 +434,10 @@ export default function ProductsPage() {
                         <TableRow>
                           <TableHead className="w-12">
                             <Checkbox
-                              checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
+                              checked={
+                                selectedProducts.length === filteredProducts.length &&
+                                filteredProducts.length > 0
+                              }
                               onCheckedChange={handleSelectAll}
                             />
                           </TableHead>
@@ -428,23 +454,27 @@ export default function ProductsPage() {
                             <TableCell>
                               <Checkbox
                                 checked={selectedProducts.includes(product.id)}
-                                onCheckedChange={(checked) => handleSelectProduct(product.id, checked as boolean)}
+                                onCheckedChange={(checked) =>
+                                  handleSelectProduct(product.id, checked as boolean)
+                                }
                               />
                             </TableCell>
                             <TableCell>
-                              <div className="flex items-center gap-3">
                                 <img
-                                  src={product.image || "/placeholder.svg?height=40&width=40"}
+                                  src={
+                                    product.image
+                                      ? product.image.startsWith("/productUploads/")
+                                        ? `http://localhost:5000/upload/${product.image.replace("/productUploads/", "")}`
+                                        : `http://localhost:5000/upload/${product.image}`
+                                      : "/placeholder.svg?height=40&width=40"
+                                  }
                                   alt={product.name}
                                   className="w-10 h-10 rounded object-cover"
                                 />
-                                <div>
-                                  <div className="font-medium">{product.name}</div>
-                                  <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
-                                </div>
-                              </div>
+                              </TableCell>
+                            <TableCell className="font-medium">
+                              Rs.{product.price.toFixed(2)}
                             </TableCell>
-                            <TableCell className="font-medium">Rs.{product.price.toFixed(2)}</TableCell>
                             <TableCell>{getCategoryName(product.category_id)}</TableCell>
                             <TableCell>{product.stock}</TableCell>
                             <TableCell>
@@ -455,7 +485,9 @@ export default function ProductsPage() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                  <DropdownMenuItem onClick={() => handleEdit(product)}>Edit</DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleEdit(product)}>
+                                    Edit
+                                  </DropdownMenuItem>
                                   <DropdownMenuItem
                                     className="text-red-600"
                                     onClick={() => handleDeleteClick(product.id)}
@@ -512,7 +544,13 @@ export default function ProductsPage() {
                 <label htmlFor="name" className="text-sm font-medium">
                   Name
                 </label>
-                <Input name="name" value={form.name} onChange={handleFormChange} required className="mt-1" />
+                <Input
+                  name="name"
+                  value={form.name}
+                  onChange={handleFormChange}
+                  required
+                  className="mt-1"
+                />
               </div>
 
               <div>
@@ -563,7 +601,13 @@ export default function ProductsPage() {
                 <label htmlFor="image" className="text-sm font-medium">
                   Image
                 </label>
-                <Input name="image" type="file" accept="image/*" onChange={handleFormChange} className="mt-1" />
+                <Input
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFormChange}
+                  className="mt-1"
+                />
               </div>
 
               <DialogFooter>
@@ -614,7 +658,9 @@ export default function ProductsPage() {
               <div className="flex items-center gap-2">
                 <Switch
                   checked={categoryForm.active}
-                  onCheckedChange={(checked) => setCategoryForm((prev) => ({ ...prev, active: checked }))}
+                  onCheckedChange={(checked) =>
+                    setCategoryForm((prev) => ({ ...prev, active: checked }))
+                  }
                   name="active"
                   id="active"
                 />
@@ -627,12 +673,22 @@ export default function ProductsPage() {
                 <label htmlFor="c_image" className="text-sm font-medium">
                   Image
                 </label>
-                <Input name="image" type="file" accept="image/*" onChange={handleCategoryFormChange} className="mt-1" />
+                <Input
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCategoryFormChange}
+                  className="mt-1"
+                />
               </div>
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline" type="button" onClick={handleCategoryModalClose}>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={handleCategoryModalClose}
+                  >
                     Cancel
                   </Button>
                 </DialogClose>
@@ -663,5 +719,5 @@ export default function ProductsPage() {
         </Dialog>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

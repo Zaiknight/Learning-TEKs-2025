@@ -6,10 +6,17 @@ import { ProductValidation } from "../validation/product.validation";
 export const ProductController = {
     async getAll (req: Request, res: Response) {
         try {
-          const products = await productService.getAll();
-          return ResponseHandler.success(res, "Products Fetched", 200, products)
-        } catch (error : any) {
-          return ResponseHandler.error(res, "Unable to Fetch", 401);
+            const products = await productService.getAll();
+    
+            // Attach full image URL
+            const fullProducts = products.map((product: any) => ({
+                ...product,
+                img_path: `${req.protocol}://${req.get("host")}/uploads/${product.img_path}`
+            }));
+    
+            return ResponseHandler.success(res, "Products Fetched", 200, fullProducts);
+        } catch (error: any) {
+            return ResponseHandler.error(res, "Unable to Fetch", 500);
         }
     },
     async getById(req: Request, res : Response) {
@@ -39,7 +46,19 @@ export const ProductController = {
     },
 
     async create(req: Request, res : Response){
-        await ProductValidation.add(req.body, res);
+        try {
+            // Extract image path
+            const imagePath = req.file ? `/productUploads/${req.file.filename}` : null;
+            if (!imagePath) {
+                return ResponseHandler.error(res, "Image file is required", 422);
+            }
+            // Inject image into body before validation
+            const payload = { ...req.body, img_name: imagePath };
+    
+            await ProductValidation.add(payload, res);
+        } catch (error : any) {
+            return ResponseHandler.error(res, error.message, 401)
+        }    
     },
 
     async update(req: Request, res : Response) {
