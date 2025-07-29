@@ -4,6 +4,7 @@ import { UserService } from '../services/user.service';
 import { ResponseHandler } from '../utils/response'; // Import the response utility
 import { CreateUserDto,UpdateUserDto } from '../models/user.model';
 import { ZodError } from "zod";
+import { UserValidation } from '../validation/registration.validation';
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -46,14 +47,7 @@ export const UserController = {
   },
 
   async createUser(req: Request, res: Response) {
-    try {
-      const parsedData = CreateUserDto.parse(req.body);
-      const newUser = await UserService.createUser(parsedData);
-      return ResponseHandler.success(res, 'User created successfully!',201, newUser);
-    } catch (error:any) {
-      console.log(error);
-      return ResponseHandler.error(res, error.message,500);
-    }
+    await UserValidation.validateAccountCreation(req.body, "user", res);
   },
 
   async updateUser(req: Request, res: Response) {
@@ -74,11 +68,7 @@ export const UserController = {
   
     try {
       const result = await UserService.loginUser(email, password);
-      res.status(200).json({
-        message: 'Login successful',
-        token: result.token,
-        user: result.user
-      });
+      return ResponseHandler.success(res, "Logged In",200,result)
     } catch (error: any) {
       res.status(401).json({ message: error.message });
     }

@@ -13,17 +13,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-// Dummy authentication state
-const useAuth = () => {
-  const [user, setUser] = useState<{ name: string } | null>(null);
-  return {
-    user,
-    login: () => setUser({ name: "John Doe" }),
-    logout: () => setUser(null),
-  };
-};
-
-// Example: category columns (customize as needed)
+// Define productColumns here!
 const productColumns = [
   {
     title: "Laptops",
@@ -99,8 +89,44 @@ const productColumns = [
   },
 ];
 
+// Real authentication hook
+const useAuth = () => {
+  const [user, setUser] = useState<{ name: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Check auth status on mount
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        const data = await res.json();
+        if (res.ok && data.user) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  // Logout handler
+  const logout = async () => {
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    setUser(null);
+    // Optionally, refresh the page or redirect
+    window.location.reload();
+  };
+
+  return { user, loading, logout };
+};
+
 export function Header() {
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [userDropdown, setUserDropdown] = useState(false);
   const [productsDropdown, setProductsDropdown] = useState(false);
   const router = useRouter();
@@ -202,8 +228,8 @@ export function Header() {
             <ShoppingCart className="w-6 h-6 text-primary" />
           </Link>
 
-          {/* If user is not logged in, show Sign In/Sign Up */}
-          {!user ? (
+          {/* Show nothing until auth status is resolved */}
+          {loading ? null : !user ? (
             <>
               <Link href="/login">
                 <Button variant="outline" size="sm">
@@ -227,6 +253,9 @@ export function Header() {
               </button>
               {userDropdown && (
                 <div className="absolute right-0 mt-2 w-48 bg-background rounded shadow-lg border z-50 animate-fade-in">
+                  <div className="px-4 py-3 font-medium text-primary/90">
+                    {user.name}
+                  </div>
                   <button
                     className="flex items-center w-full px-4 py-2 text-foreground hover:bg-muted"
                     onClick={() => {

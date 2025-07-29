@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers"; // For setting cookies on the server
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -24,7 +25,21 @@ export async function POST(req: NextRequest) {
         { status: response.status }
       );
     }
-    return NextResponse.json(data);
+
+    // Assuming your controller returns { user, token }
+    const { user, token } = data as { user: any; token: string };
+
+
+    (await cookies()).set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    // Optionally, don't send the token back to the client, just user info
+    return NextResponse.json({ user });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Network Error" }, { status: 500 });
   }

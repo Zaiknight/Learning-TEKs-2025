@@ -33,6 +33,8 @@ export default function LoginPage() {
       setLoading(false);
       return;
     }
+    
+
     router.push("/#home");
   }
 

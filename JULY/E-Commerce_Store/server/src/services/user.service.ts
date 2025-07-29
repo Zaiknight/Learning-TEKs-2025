@@ -50,7 +50,7 @@ export const UserService = {
     }
   
     const token = AuthUtil.generateToken({ id: user.id, email: user.email });
-    
+    console.log(token)
     return { user, token };
   },
 
