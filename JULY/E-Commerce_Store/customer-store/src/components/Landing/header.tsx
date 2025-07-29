@@ -89,12 +89,11 @@ const productColumns = [
   },
 ];
 
-// Real authentication hook
 const useAuth = () => {
   const [user, setUser] = useState<{ name: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Check auth status on mount
+  
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -114,11 +113,11 @@ const useAuth = () => {
     fetchUser();
   }, []);
 
-  // Logout handler
+  
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     setUser(null);
-    // Optionally, refresh the page or redirect
+    
     window.location.reload();
   };
 

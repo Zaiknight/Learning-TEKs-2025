@@ -23,7 +23,7 @@ export const UserService = {
   },
 
   async createUser(userData: any) {
-    const user = await userRepository.findByEmail(userData.email); // now returns a single user
+    const user = await userRepository.findByEmail(userData.email);
   
     if (user) {
       throw new Error('User Already exists');

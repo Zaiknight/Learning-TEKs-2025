@@ -3,15 +3,45 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+
 
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  function handleSubmit(e: React.FormEvent) {
+  //error states
+  const [fnameError, setFnameError] = useState<string | null>(null);
+  const [lnameError, setLnameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  //form states
+  const [first_name, setFirst_name] = useState("");
+  const [last_name, setLast_name] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    // TODO: Replace with real signup logic
-    setTimeout(() => setLoading(false), 1200);
+
+    const res = await fetch("/api/auth/signup",{
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ first_name, last_name, email, password }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if(!res.ok){
+      setEmailError(data.error || "Login failed. Please check your credentials.");
+      setLoading(false);
+      return;    
+    }
+
+    router.push("/login");
   }
 
   return (
@@ -23,12 +53,19 @@ export default function SignupPage() {
         </p>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="name" className="text-sm font-medium">Name</label>
+            <label htmlFor="first_name" className="text-sm font-medium">First Name</label>
             <Input
-              id="name"
-              name="name"
-              required
-              placeholder="Your Name"
+              id="first_name"
+              placeholder="John"
+              className="mt-1"
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label htmlFor="last_name" className="text-sm font-medium">Last Name</label>
+            <Input
+              id="last_name"
+              placeholder="Smith"
               className="mt-1"
               disabled={loading}
             />
@@ -40,7 +77,6 @@ export default function SignupPage() {
               name="email"
               type="email"
               autoComplete="email"
-              required
               placeholder="you@example.com"
               className="mt-1"
               disabled={loading}
@@ -52,8 +88,6 @@ export default function SignupPage() {
               id="password"
               name="password"
               type="password"
-              autoComplete="new-password"
-              required
               placeholder="Minimum 8 characters"
               className="mt-1"
               disabled={loading}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers"; // For setting cookies on the server
+import { cookies } from "next/headers";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Assuming your controller returns { user, token }
-    const { user, token } = data as { user: any; token: string };
+    const token = data.token || data.data?.token;
+    const user = data.user || data.data?.user;
 
 
     (await cookies()).set("token", token, {
