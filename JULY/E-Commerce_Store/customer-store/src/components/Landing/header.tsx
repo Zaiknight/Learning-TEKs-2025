@@ -13,81 +13,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-// Define productColumns here!
-const productColumns = [
-  {
-    title: "Laptops",
-    items: [
-      { label: "Laptops", href: "/categories/laptops" },
-      { label: "Laptops | Used", href: "/categories/laptops-used" },
-      { label: "Laptop Accessories", href: "/categories/laptop-accessories" },
-      { label: "Cameras | Drones", href: "/categories/cameras-drones" },
-      { label: "Cartridges & Toners", href: "/categories/cartridges-toners" },
-      { label: "Casing", href: "/categories/casing" },
-      { label: "Cooling Solutions", href: "/categories/cooling-solutions" },
-    ],
-  },
-  {
-    title: "Gaming",
-    items: [
-      { label: "Desktop Computers", href: "/categories/desktop-computers" },
-      { label: "Gaming Consoles", href: "/categories/gaming-consoles" },
-      { label: "Gaming Furniture", href: "/categories/gaming-furniture" },
-      { label: "Gaming Products", href: "/categories/gaming-products" },
-      { label: "Graphic Cards", href: "/categories/graphic-cards" },
-      { label: "Graphic Tablets", href: "/categories/graphic-tablets" },
-      { label: "Hard Drives", href: "/categories/hard-drives" },
-    ],
-  },
-  {
-    title: "Peripherals",
-    items: [
-      { label: "Headsets | Headphones | Mic", href: "/categories/headsets-headphones-mic" },
-      { label: "Keyboard", href: "/categories/keyboard" },
-      { label: "LCD/LED Monitors", href: "/categories/monitors" },
-      { label: "Memory Cards", href: "/categories/memory-cards" },
-      { label: "Memory Module / RAM", href: "/categories/ram" },
-      { label: "Motherboards", href: "/categories/motherboards" },
-      { label: "Mouse", href: "/categories/mouse" },
-    ],
-  },
-  {
-    title: "Network & Office",
-    items: [
-      { label: "Network Products", href: "/categories/network-products" },
-      { label: "Peripherals / Misc", href: "/categories/peripherals-misc" },
-      { label: "Point Of Sale POS", href: "/categories/pos" },
-      { label: "Power Supply", href: "/categories/power-supply" },
-      { label: "Presenters", href: "/categories/presenters" },
-      { label: "Printers", href: "/categories/printers" },
-      { label: "Processors", href: "/categories/processors" },
-    ],
-  },
-  {
-    title: "More",
-    items: [
-      { label: "Projectors", href: "/categories/projectors" },
-      { label: "Scanner", href: "/categories/scanner" },
-      { label: "Smart Watches", href: "/categories/smart-watches" },
-      { label: "Softwares", href: "/categories/softwares" },
-      { label: "Solid-State Drives (SSD)", href: "/categories/ssd" },
-      { label: "Speakers", href: "/categories/speakers" },
-      { label: "Stabilizer", href: "/categories/stabilizer" },
-    ],
-  },
-  {
-    title: "Tablets & Media",
-    items: [
-      { label: "Tablet PC", href: "/categories/tablet-pc" },
-      { label: "Tablet Accessories", href: "/categories/tablet-accessories" },
-      { label: "TV Devices | Streaming", href: "/categories/tv-streaming" },
-      { label: "Media Players", href: "/categories/media-players" },
-      { label: "UPS", href: "/categories/ups" },
-      { label: "USB Flash Drives", href: "/categories/usb-flash-drives" },
-      { label: "Used Products", href: "/categories/used-products" },
-    ],
-  },
-];
 
 const useAuth = () => {
   const [user, setUser] = useState<{ name: string } | null>(null);
@@ -162,56 +87,9 @@ export function Header() {
           <a href="/#features" className="text-base font-medium text-foreground hover:text-primary transition-colors">
             Features
           </a>
-          {/* Products Dropdown */}
-          <div className="relative" ref={productsDropdownRef}>
-            <button
-              onClick={() => setProductsDropdown((open) => !open)}
-              className={`text-base font-medium transition-colors flex items-center gap-1 px-2 py-1 rounded ${
-                productsDropdown
-                  ? "text-yellow-500 bg-muted"
-                  : "text-foreground hover:text-primary"
-              }`}
-              aria-haspopup="true"
-              aria-expanded={productsDropdown}
-              type="button"
-            >
-              Products
-              <ChevronDown className="w-4 h-4" />
-            </button>
-            {productsDropdown && (
-              <div
-                className="fixed left-1/2 top-[4.5rem] z-40"
-                style={{
-                  transform: "translateX(-50%)",
-                  minWidth: "900px",
-                  maxWidth: "95vw",
-                }}
-              >
-                <div className="bg-background border rounded shadow-lg animate-fade-in p-6 flex gap-8"
-                  style={{ minHeight: 260 }}
-                >
-                  {productColumns.map((col, idx) => (
-                    <div key={idx} className="min-w-[120px]">
-                      <div className="mb-2 font-semibold text-primary/80 tracking-wide text-sm">{col.title}</div>
-                      <ul className="space-y-1">
-                        {col.items.map((item, ii) => (
-                          <li key={ii}>
-                            <Link
-                              href={item.href}
-                              className="text-sm text-foreground hover:text-primary hover:underline transition rounded focus:outline-none focus:ring-2 focus:ring-primary/30 px-1"
-                              onClick={() => setProductsDropdown(false)}
-                            >
-                              {item.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <a href="/categories" className="text-base font-medium text-foreground hover:text-primary transition-colors">
+            Shop
+          </a>
           <a href="/#testimonials" className="text-base font-medium text-foreground hover:text-primary transition-colors">
             Reviews
           </a>

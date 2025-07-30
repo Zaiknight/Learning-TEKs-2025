@@ -8,6 +8,7 @@ const router = Router();
 router.get("/",ProductController.getAll);
 router.get("/:id", ProductController.getById);
 router.get("/name/:name", ProductController.getByName);
+router.get("/categoryId/:category_id", ProductController.getByCategoryID);
 
 router.post('/', upload.single('image'), ProductController.create);
 

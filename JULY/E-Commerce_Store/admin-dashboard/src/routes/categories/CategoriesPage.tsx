@@ -20,7 +20,7 @@ type Category = {
   name: string
   description: string
   active: boolean
-  image: string // This is the filename stored in DB
+  image: string
 }
 
 export default function CategoriesPage() {
@@ -34,7 +34,7 @@ export default function CategoriesPage() {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [statusFilter, setStatusFilter] = React.useState<string>("all")
 
-  // Hold file object or string (for File input)
+  //file object or string (for File input)
   const [form, setForm] = React.useState({
     name: "",
     description: "",

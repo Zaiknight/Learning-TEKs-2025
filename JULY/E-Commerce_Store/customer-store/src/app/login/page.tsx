@@ -19,7 +19,6 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    // Call your Next.js API route
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

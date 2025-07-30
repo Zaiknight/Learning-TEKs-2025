@@ -8,13 +8,7 @@ export const ProductController = {
         try {
             const products = await productService.getAll();
     
-            // Attach full image URL
-            const fullProducts = products.map((product: any) => ({
-                ...product,
-                img_path: `${req.protocol}://${req.get("host")}/uploads/${product.img_path}`
-            }));
-    
-            return ResponseHandler.success(res, "Products Fetched", 200, fullProducts);
+            return ResponseHandler.success(res, "Products Fetched", 200, products);
         } catch (error: any) {
             return ResponseHandler.error(res, "Unable to Fetch", 500);
         }
@@ -36,6 +30,19 @@ export const ProductController = {
         try {
             const name = String(req.params.name);
             const product = await productService.getByName(name);
+            if(!product) {
+                return ResponseHandler.error(res, "Product does not Exist", 404);
+            }
+            return ResponseHandler.success(res, "success", 200, product);
+        } catch (error : any) {
+            return ResponseHandler.error(res, error.message, 401)
+        }
+    },
+     
+    async getByCategoryID( req: Request, res: Response){
+        try {
+            const category_id = Number(req.params.category_id);
+            const product = await productService.getByCategoryID(category_id);
             if(!product) {
                 return ResponseHandler.error(res, "Product does not Exist", 404);
             }

@@ -6,6 +6,8 @@ import { Testimonials } from "@/components/Landing/testimonials";
 import { CallToAction } from "@/components/Landing/callToAction";
 import { ContactUs } from "@/components/Landing/ContactUs";
 import { Footer } from "@/components/Landing/footer";
+
+
 export default function LandingPage() {
   return (
     <>

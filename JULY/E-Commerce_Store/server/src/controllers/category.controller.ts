@@ -8,11 +8,6 @@ export const CategoryController = {
     async getAll( req: Request, res: Response) {
         try {
             const categories = await categoryService.getAll();
-
-            const fullCategory = categories.map((category : any) => ({
-                ...categories,
-                img_path: `${req.protocol}://${req.get("host")}/uploads/${category.img_path}`
-            }));
             return ResponseHandler.success(res, "Categories Fetched Successfully", 200, categories);
         } catch (error) {
             return ResponseHandler.error(res, "Unable to fetch categories", 422);

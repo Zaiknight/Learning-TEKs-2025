@@ -71,9 +71,10 @@ export function LoginForm({
       }
       if (adminEmail) {
         localStorage.setItem("adminEmail",adminEmail);
+        navigate("/dashboard");
       }
 
-      navigate("/dashboard");
+      
     } catch (err: any) {
       setError(err.message || "Network error");
     }

@@ -16,6 +16,10 @@ export const productService = {
         return productRepo.findByName(name);
       },
 
+      async getByCategoryID(id : number){
+        return productRepo.findByCategoryId(id);
+      },
+
       async create(productData : any) {
         return productRepo.create(productData);
       },

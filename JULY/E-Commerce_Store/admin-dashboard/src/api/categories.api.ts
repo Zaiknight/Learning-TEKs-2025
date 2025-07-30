@@ -130,7 +130,6 @@ export const CategoryAPI = {
         }
     },
 
-    // Update category by ID
     async updateCategory(
         id: number | string,
         category: {
@@ -141,7 +140,6 @@ export const CategoryAPI = {
         }
     ) {
         try {
-            // Map frontend 'image' to backend 'img_name'
             const backendCategory: any = {
                 ...category,
             };

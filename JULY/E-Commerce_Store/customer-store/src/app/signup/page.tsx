@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 
-
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   //error states
+  const [error, setError] = useState<string | null>(null);
   const [fnameError, setFnameError] = useState<string | null>(null);
   const [lnameError, setLnameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -22,10 +22,16 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+
+    // Reset all errors
+    setError(null);
+    setFnameError(null);
+    setLnameError(null);
+    setEmailError(null);
+    setPasswordError(null);
 
     const res = await fetch("/api/auth/signup",{
       method: "POST",
@@ -36,9 +42,19 @@ export default function SignupPage() {
     const data = await res.json().catch(() => ({}));
 
     if(!res.ok){
-      setEmailError(data.error || "Login failed. Please check your credentials.");
+      if (data.validation_errors) {
+        setFnameError(data.validation_errors.first_name || null);
+        setLnameError(data.validation_errors.last_name || null);
+        setEmailError(data.validation_errors.email || null);
+        setPasswordError(data.validation_errors.password || null);
+        setLoading(false);
+        return;
+      }
+
+
+      setError("Signup failed. Account Already Exists.");
       setLoading(false);
-      return;    
+      return;
     }
 
     router.push("/login");
@@ -58,8 +74,13 @@ export default function SignupPage() {
               id="first_name"
               placeholder="John"
               className="mt-1"
+              value={first_name}
               disabled={loading}
+              onChange={e => setFirst_name(e.target.value)}
             />
+            {fnameError && (
+              <div className="text-red-500 text-sm text-center">{fnameError}</div>
+            )}
           </div>
           <div>
             <label htmlFor="last_name" className="text-sm font-medium">Last Name</label>
@@ -67,20 +88,28 @@ export default function SignupPage() {
               id="last_name"
               placeholder="Smith"
               className="mt-1"
+              value={last_name}
               disabled={loading}
+              onChange={e => setLast_name(e.target.value)}
             />
+            {lnameError && (
+              <div className="text-red-500 text-sm text-center">{lnameError}</div>
+            )}
           </div>
           <div>
             <label htmlFor="email" className="text-sm font-medium">Email</label>
             <Input
               id="email"
-              name="email"
-              type="email"
               autoComplete="email"
               placeholder="you@example.com"
+              value={email}
               className="mt-1"
               disabled={loading}
+              onChange={e => setEmail(e.target.value)}
             />
+            {emailError && (
+              <div className="text-red-500 text-sm text-center">{emailError}</div>
+            )}
           </div>
           <div>
             <label htmlFor="password" className="text-sm font-medium">Password</label>
@@ -90,9 +119,17 @@ export default function SignupPage() {
               type="password"
               placeholder="Minimum 8 characters"
               className="mt-1"
+              value={password}
               disabled={loading}
+              onChange={e => setPassword(e.target.value)}
             />
+            {passwordError && (
+              <div className="text-red-500 text-sm text-center">{passwordError}</div>
+            )}
           </div>
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
           <Button type="submit" className="mt-2 w-full" disabled={loading}>
             {loading ? "Signing up..." : "Sign Up"}
           </Button>
