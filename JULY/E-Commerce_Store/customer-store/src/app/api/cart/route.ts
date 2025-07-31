@@ -1,54 +1,32 @@
-"use client";
-import { ca } from "date-fns/locale";
 import { NextRequest, NextResponse } from "next/server";
-import { useState } from "react";
 
-const API_URL = process.env.API_BASE_URL;
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:5000";
 
-const [user, setUser] = useState<{id:number ,name:string} | null>(null);
-
-async function fetchUser() {
-    try {
-      const res = await fetch("/api/auth/me", { credentials: "include" });
-      const data = await res.json();
-      if (res.ok && data.user) {
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (err) {
-      setUser(null);
-  }
-}
-
-export async function GetCartID(req: NextRequest) {
-  fetchUser();
-
-  const user_id = user?.id;
-
-  if(!user_id){
-
-    return;
-  }
-
+export async function GET(req: NextRequest) {
   try {
-    const CartResponse = await fetch(`${API_URL}/cart/${user_id}`, {
+    const authRes = await fetch(`${req.nextUrl.origin}/api/auth/me`, {
+      headers: req.headers,
+      credentials: "include",
+    });
+    const authData = await authRes.json();
+    const user = authData.user;
+    if (!user?.id) {
+      return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+    }
+
+    const cartRes = await fetch(`${API_BASE_URL}/cart/${user.id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-    })
-    if (!CartResponse.ok) {
-        return NextResponse.json({ error: "Cart ID Not found." }, { status: 404 });
-      }
-    
-    const cart_data = await CartResponse.json();
-    const cart_id = cart_data?.data.id;
-    
-    if (!cart_id) {
-        return NextResponse.json({ error: "Cart ID Not found." }, { status: 404 });
-      }   
-    return cart_id;  
-  } catch (error:any) {
-    return NextResponse.json({error: error.message}, {status: 500});
+    });
+    if (!cartRes.ok) {
+      return NextResponse.json({ error: "Cart not found." }, { status: 404 });
+    }
+    const cartData = await cartRes.json();
+    return NextResponse.json({ cart: cartData.data }, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
-

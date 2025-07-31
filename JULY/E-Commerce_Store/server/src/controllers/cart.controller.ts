@@ -15,7 +15,7 @@ export const CartController = {
           return ResponseHandler.success(res, "Successfully Retreived Cart", 200, cart);
         
         } catch (error:any) {
-          return ResponseHandler.error(res, "error.message", 404);
+          return ResponseHandler.error(res, error.message, 404);
         }
     },
 

@@ -35,6 +35,8 @@ type Product = {
   category_id?: number | string;
 };
 
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:5000";
+
 export default function ProductDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -47,8 +49,24 @@ export default function ProductDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [wishlistModalOpen, setWishlistModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [cartSuccess, setCartSuccess] = useState<string | null>(null);
+  const [cartError, setCartError] = useState<string | null>(null);
 
-  const [isLoggedIn] = useState(false);
+  // Fetch user login state on mount
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        const data = await res.json();
+        setIsLoggedIn(res.ok && !!data.user);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    }
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -107,6 +125,100 @@ export default function ProductDetailsPage() {
     } else {
       // TODO: Implement add to wishlist
     }
+  }
+
+  // --- Add to Cart Logic ---
+  async function handleAddToCart() {
+    setAddingToCart(true);
+    setCartSuccess(null);
+    setCartError(null);
+
+    if (!product) {
+      setCartError("Product not found.");
+      setAddingToCart(false);
+      return;
+    }
+
+    // 1. Check user login
+    let user: { id: number } | null = null;
+    try {
+      const res = await fetch("/api/auth/me", { credentials: "include" });
+      const data = await res.json();
+      if (res.ok && data.user) user = data.user;
+    } catch {}
+
+    if (!user) {
+      // Not logged in: use localStorage cart
+      try {
+        const cartLS = window.localStorage.getItem("cart");
+        let cart: { [productId: string]: { product: Product; quantity: number } } = {};
+        if (cartLS) cart = JSON.parse(cartLS);
+
+        // If product already in cart, update quantity
+        if (cart[product.id]) {
+          cart[product.id].quantity = Math.min(stock, cart[product.id].quantity + quantity);
+        } else {
+          cart[product.id] = { product, quantity };
+        }
+        window.localStorage.setItem("cart", JSON.stringify(cart));
+        setCartSuccess("Added to cart!");
+      } catch (err) {
+        setCartError("Could not add to cart (local).");
+      }
+      setAddingToCart(false);
+      return;
+    }
+
+    // 2. Logged in: Add to backend cart
+    try {
+      // Get cart id for user (or create if missing)
+      let cartID: number | null = null;
+      // Try getting cart id
+      const cartRes = await fetch(`${API_BASE_URL}/cart/${user.id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (cartRes.ok) {
+        const cartData = await cartRes.json();
+        cartID = cartData?.data?.id;
+      }
+      // If no cart exists, create one
+      if (!cartID) {
+        const createCartRes = await fetch(`${API_BASE_URL}/cart`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.id }),
+        });
+        if (createCartRes.ok) {
+          const cartData = await createCartRes.json();
+          cartID = cartData?.data?.id;
+        }
+      }
+      if (!cartID) {
+        setCartError("Could not get or create cart.");
+        setAddingToCart(false);
+        return;
+      }
+      // Add or update cart item
+      const addCartItemRes = await fetch(`${API_BASE_URL}/cartItem`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cart_id: cartID,
+          product_id: product.id,
+          quantity,
+        }),
+      });
+      if (!addCartItemRes.ok) {
+        setCartError("Could not add item to cart.");
+        setAddingToCart(false);
+        return;
+      }
+      setCartSuccess("Added to cart!");
+    } catch (err) {
+      setCartError("Could not add to cart.");
+    }
+    setAddingToCart(false);
   }
 
   return (
@@ -201,14 +313,29 @@ export default function ProductDetailsPage() {
                 <div className="flex flex-col sm:flex-row gap-3 w-full mt-4">
                   <Button
                     variant="outline"
-                    className="flex-1 border-black text-black bg-white hover:bg-black hover:text-white hover:border-white"
+                    className="flex-1 border-black text-black bg-white hover:bg-black hover:text-white hover:border-white cursor-pointer"
+                    onClick={handleAddToCart}
+                    disabled={addingToCart}
                   >
-                    Add to cart
+                    {addingToCart ? "Adding..." : "Add to cart"}
                   </Button>
-                  <Button className="flex-1 bg-black border-black hover:bg-white hover:text-black hover:border-black text-white ">
-                    Buy it now
+                  <Button
+                    className="flex-1 bg-black border-black hover:bg-white hover:text-black hover:border-black text-white cursor-pointer"
+                    onClick={async () => {
+                      await handleAddToCart();
+                      router.push("/cart");
+                    }}
+                    disabled={addingToCart}
+                  >
+                    {addingToCart ? "Adding..." : "Buy it now"}
                   </Button>
                 </div>
+                {/* Success/Error message */}
+                {(cartSuccess || cartError) && (
+                  <div className={`mt-2 text-sm ${cartSuccess ? 'text-green-600' : 'text-red-600'}`}>
+                    {cartSuccess || cartError}
+                  </div>
+                )}
                 {/* Stock/urgency/extra info */}
                 <div className="mt-8">
                   {showLowStock && (

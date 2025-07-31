@@ -21,6 +21,8 @@ const PRODUCTS_PER_PAGE = 5;
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(0);
+  const [addingId, setAddingId] = useState<number|string|null>(null);
+  const [addSuccess, setAddSuccess] = useState<number|string|null>(null);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -42,7 +44,7 @@ export function FeaturedProducts() {
               : "/placeholder.png",
             price: p.price,
             description: p.description,
-            slug: p.slug || slugify(p.name) || p.id, // prefer slug, fallback to slugified name or id
+            slug: p.slug || slugify(p.name) || p.id, 
           }))
         );
       } catch {
@@ -67,8 +69,69 @@ export function FeaturedProducts() {
     page * PRODUCTS_PER_PAGE + PRODUCTS_PER_PAGE
   );
 
-  // For consistent layout, measure content height
-  // We'll use flex and min-h to achieve this
+  // Add to cart logic
+  async function handleAddToCart(product: Product) {
+    setAddingId(product.id);
+    setAddSuccess(null);
+    // Check if user is logged in
+    try {
+      const authRes = await fetch("/api/auth/me", { credentials: "include" });
+      const authData = await authRes.json();
+      if (authRes.ok && authData.user) {
+        // Logged in user: send to backend
+        const userId = authData.user.id;
+        // 1. Get or create cart
+        let cartId: number | null = null;
+        const cartRes = await fetch(`${API_BASE_URL}/cart/${userId}`);
+        if (cartRes.ok) {
+          const cartData = await cartRes.json();
+          cartId = cartData?.data?.id;
+        }
+        if (!cartId) {
+          const cartCreate = await fetch(`${API_BASE_URL}/cart`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId }),
+          });
+          if (cartCreate.ok) {
+            const cartData = await cartCreate.json();
+            cartId = cartData?.data?.id;
+          }
+        }
+        if (!cartId) throw new Error("Could not create cart");
+        // 2. Add item to cart
+        const addRes = await fetch(`${API_BASE_URL}/cartItem`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cart_id: cartId,
+            product_id: product.id,
+            quantity: 1,
+          }),
+        });
+        if (!addRes.ok) throw new Error("Could not add to cart");
+        setAddSuccess(product.id);
+      } else {
+        if (typeof window !== "undefined") {
+          const cartLS = window.localStorage.getItem("cart");
+          let cart: { [id: string]: { product: Product; quantity: number } } = {};
+          if (cartLS) cart = JSON.parse(cartLS);
+          if (cart[product.id]) {
+            cart[product.id].quantity += 1; // increment
+          } else {
+            cart[product.id] = { product, quantity: 1 };
+          }
+          window.localStorage.setItem("cart", JSON.stringify(cart));
+          setAddSuccess(product.id);
+        }
+      }
+    } catch {
+      // Optionally, show error UI here
+    }
+    setAddingId(null);
+    setTimeout(() => setAddSuccess(null), 1200);
+  }
+
   return (
     <section className="w-full py-16 bg-muted overflow-hidden">
       <div className="container mx-auto">
@@ -128,12 +191,15 @@ export function FeaturedProducts() {
                 <div className="px-6 pb-5 mt-auto">
                   <Button
                     className="w-full bg-black text-white hover:text-black cursor-pointer"
-                    onClick={() => {
-                      /* Add to cart logic here */
-                    }}
+                    onClick={() => handleAddToCart(product)}
                     variant="secondary"
+                    disabled={addingId === product.id}
                   >
-                    Add to Cart
+                    {addSuccess === product.id
+                      ? "Added!"
+                      : addingId === product.id
+                      ? "Adding..."
+                      : "Add to Cart"}
                   </Button>
                 </div>
               </Card>

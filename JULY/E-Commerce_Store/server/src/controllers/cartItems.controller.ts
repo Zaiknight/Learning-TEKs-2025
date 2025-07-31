@@ -11,6 +11,21 @@ export const cartItemController = {
           return ResponseHandler.error(res,error.message, 403)
         }
       },
+
+    async getByCartId(req: Request, res: Response){
+      try {
+        const cart_id = Number(req.params.cart_id);
+        const cartitems = await cartItemsService.GetByCartId(cart_id)
+
+        if(!cartitems){
+          return ResponseHandler.error(res, 'Error: Cart Items Not Found', 404);
+        }
+
+        return ResponseHandler.success(res, "Success", 200, cartitems )
+      } catch (error:any) {
+        return ResponseHandler.error(res, error.message, 404);
+      }
+    },
   
       async delete(req:Request, res: Response){
           try {
@@ -20,6 +35,44 @@ export const cartItemController = {
           } catch (error:any) {
             return ResponseHandler.error(res, error.message, 500);
           }
+      },
+
+      async addQuantity(req: Request, res: Response){
+        try {
+          const id = Number(req.params.id);
+
+          if(!id){
+            return ResponseHandler.error(res, 'Id not found', 404);
+
+          }
+          const updatedItem = await cartItemsService.addQuantity(id);
+
+        if (!updatedItem) {
+        return ResponseHandler.error(res, 'Item not found', 404);
       }
+      return ResponseHandler.success(res, 'Item updated successfully!',201, updatedItem);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message,400);
+    }
+  },
+  
+    async subQuantity(req: Request, res: Response){
+      try {
+        const id = Number(req.params.id);
+
+        if(!id){
+          return ResponseHandler.error(res, 'Id not found', 404);
+
+        }
+        const updatedItem = await cartItemsService.subQuantity(id);
+
+      if (!updatedItem) {
+      return ResponseHandler.error(res, 'Item not found', 404);
+    }
+    return ResponseHandler.success(res, 'Item updated successfully!',201, updatedItem);
+  } catch (error:any) {
+    return ResponseHandler.error(res, error.message,400);
+  }
+}
   
 }
