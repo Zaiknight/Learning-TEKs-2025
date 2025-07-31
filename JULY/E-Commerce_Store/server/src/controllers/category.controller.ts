@@ -51,12 +51,22 @@ export const CategoryController = {
         } catch (error :any) {
             return ResponseHandler.error(res, error.message, 500)
         }
-
     },
 
     async update(req: Request, res : Response) {
       const id = Number(req.params.id);
-      await CategoryValidation.validateEdit(id, req.body, res)
+      try {
+        const imagePath = req.file ? `${req.file.filename}` : null;
+        if(!imagePath){
+            return ResponseHandler.error(res, "Image file is required",422);
+        }
+        const payload = {...req.body, img_name: imagePath};
+
+        await CategoryValidation.validateEdit(id, payload, res)
+        
+    } catch (error :any) {
+        return ResponseHandler.error(res, error.message, 500)
+    }
     },
 
     async delete(req:Request, res: Response){

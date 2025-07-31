@@ -269,13 +269,6 @@ export default function ProductDetailsPage() {
                     Sign Up
                   </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  className="mt-6 w-full"
-                  onClick={() => setWishlistModalOpen(false)}
-                >
-                  Cancel
-                </Button>
               </DialogContent>
             </Dialog>
           </>

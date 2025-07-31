@@ -54,12 +54,10 @@ export const ProductController = {
 
     async create(req: Request, res : Response){
         try {
-            // Extract image path
-            const imagePath = req.file ? `/productUploads/${req.file.filename}` : null;
+            const imagePath = req.file ? `${req.file.filename}` : null;
             if (!imagePath) {
                 return ResponseHandler.error(res, "Image file is required", 422);
             }
-            // Inject image into body before validation
             const payload = { ...req.body, img_name: imagePath };
     
             await ProductValidation.add(payload, res);
@@ -70,7 +68,18 @@ export const ProductController = {
 
     async update(req: Request, res : Response) {
       const id = Number(req.params.id);
-      await ProductValidation.edit(id, req.body, res)
+      try {
+        const img_path = req.file ? `${req.file.filename}` : null;
+        if(!img_path) {
+            return ResponseHandler.error(res, "Image file is required", 422);
+        }
+        const payload = { ...req.body, img_name: img_path };
+
+        await ProductValidation.edit(id, payload, res)
+
+      } catch (error:any) {
+        return ResponseHandler.error(res, error.message, 500)
+      }
     },
 
     async delete(req:Request, res: Response){

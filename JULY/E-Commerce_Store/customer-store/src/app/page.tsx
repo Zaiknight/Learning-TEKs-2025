@@ -1,7 +1,7 @@
 import { Header } from "@/components/Landing/header";
 import { Hero } from "@/components/Landing/hero";
 import { Features } from "@/components/Landing/featured";
-import { ProductShowcase } from "@/components/Landing/productShowcase";
+import { FeaturedProducts } from "@/components/Landing/productShowcase";
 import { Testimonials } from "@/components/Landing/testimonials";
 import { CallToAction } from "@/components/Landing/callToAction";
 import { ContactUs } from "@/components/Landing/ContactUs";
@@ -19,7 +19,7 @@ export default function LandingPage() {
         <Features />
       </section>
       <section id="products">
-        <ProductShowcase />
+        <FeaturedProducts />
       </section>
       <section id="testimonials">
         <Testimonials />

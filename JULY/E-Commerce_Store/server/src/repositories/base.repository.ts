@@ -1,6 +1,5 @@
 import {pool} from '../config/db';
 
-// DRY (DONT REPEAT YOURSELF) Principle
 
 export abstract class BaseRepository<Base>{
     protected table:string;
