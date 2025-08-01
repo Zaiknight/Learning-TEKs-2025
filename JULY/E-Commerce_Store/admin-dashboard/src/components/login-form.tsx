@@ -65,10 +65,8 @@ export function LoginForm({
 
       createCookie("token", token, 1); // 1 days expiry
 
-      // Store admin name for welcome message
       if (adminName) {
         localStorage.setItem("adminName", adminName);
-        navigate("/dashboard");
       }
       if (adminEmail) {
         localStorage.setItem("adminEmail",adminEmail);

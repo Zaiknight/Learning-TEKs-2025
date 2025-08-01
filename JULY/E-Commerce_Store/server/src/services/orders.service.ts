@@ -9,7 +9,7 @@ export const OrderService = {
         return order;
     },
 
-    async GetByEmail(email:string):Promise<Order[] | null>{
+    async GetByEmail(email:string):Promise<Order | null>{
         const orders = await OrderRepo.getByEmail(email);
         return orders;
     },

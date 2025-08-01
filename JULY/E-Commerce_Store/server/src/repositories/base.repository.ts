@@ -35,14 +35,14 @@ export abstract class BaseRepository<Base>{
         return result.rows[0] || null;
     }     
            
-    async findByParameter<K extends string, V = any>(key: K, value: V): Promise<Base[] | null> {
+    async findByParameter<K extends string, V = any>(key: K, value: V): Promise<Base | null> {
       const query = `
         SELECT * FROM ${this.table}
         WHERE LOWER(REPLACE(${key}, '-', ' ')) = LOWER($1)
       `;
       const transformedValue = String(value).replace(/-/g, ' ');
       const result = await pool.query(query, [transformedValue]);
-      return result.rows || null;
+      return result.rows[0] || result.rows || null;
     } 
 
     //UPDATE Method

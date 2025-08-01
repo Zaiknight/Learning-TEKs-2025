@@ -15,14 +15,14 @@ function App() {
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route element={<ProtectedRoutes/>}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/users" element={<UsersPage />} />
-              <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/products" element={<ProductsPage />} />
-            </Route>
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route element={<ProtectedRoutes/>}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/users" element={<UsersPage />} />
+                <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/products" element={<ProductsPage />} />
+              </Route>
           </Routes>
       </ThemeProvider>
     </BrowserRouter>
