@@ -17,7 +17,7 @@ export const UserService = {
     return user;
   },
 
-  async getUserByEmail(email:string): Promise<User | null>{
+  async getUserByEmail(email:string): Promise<User[] | null>{
     const user = userRepository.findByEmail(email);
     return user;
   },
@@ -42,14 +42,14 @@ export const UserService = {
       throw new Error('User Does not exist');
     }
   
-    const isValid = await AuthUtil.comparePasswords(password, user.password);
+    const isValid = await AuthUtil.comparePasswords(password, user[0].password);
     if (!isValid) {
       throw new Error('Invalid credential');
     }else{
       console.log("Logged In");
     }
   
-    const token = AuthUtil.generateToken({ id: user.id, email: user.email });
+    const token = AuthUtil.generateToken({ id: user[0].id, email: user[0].email });
     console.log(token)
     return { user, token };
   },

@@ -10,7 +10,8 @@ export class AdminRepository extends BaseRepository<Admin> {
   }
   //READ
   async findByEmail(email: string) {
-    return this.findByParameter('email', email);
+    const admin = this.findByParameter('email', email);
+    return admin;
   }  
 
   async createAdmin(adminData: any) {

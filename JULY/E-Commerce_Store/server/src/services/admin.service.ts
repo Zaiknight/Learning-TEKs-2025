@@ -18,7 +18,7 @@ export const adminService = {
     return admin;
   },
 
-  async getAdminByEmail(email:string): Promise<Admin | null>{
+  async getAdminByEmail(email:string): Promise<Admin[] | null>{
     const admin = adminRepository.findByEmail(email);
     return admin;
   },
@@ -44,12 +44,12 @@ export const adminService = {
       throw new Error('Admin does not exist');
     }
   
-    const isValid = await AuthUtil.comparePasswords(password, admin.password);
+    const isValid = await AuthUtil.comparePasswords(password, admin[0].password);
     if (!isValid) {
       throw new Error('Invalid Password');
     }
     try {
-      const token = AuthUtil.generateToken({ id: admin.id, email: admin.email });
+      const token = AuthUtil.generateToken({ id: admin[0].id, email: admin[0].email });
       return ResponseHandler.success(res, "Login Successful", 202, {admin, token});
     } catch (error : any) {
       return ResponseHandler.error(res, error , 401)

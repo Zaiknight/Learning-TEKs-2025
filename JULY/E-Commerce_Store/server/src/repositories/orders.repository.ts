@@ -15,4 +15,8 @@ export class OrderRepository extends BaseRepository<Order> {
         const guest = result.rows[0];
         return guest;
     }
+
+    async getByEmail(user_email:string){
+        return this.findByParameter('user_email',user_email);
+    }
 }

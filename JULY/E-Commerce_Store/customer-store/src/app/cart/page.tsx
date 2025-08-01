@@ -276,9 +276,11 @@ export default function CartPage() {
                   Rs. {total.toLocaleString()}
                 </span>
               </div>
+              <Link href={"/checkout"}>
               <Button size="lg" className="w-full cursor-pointer">
                 Proceed to Checkout
               </Button>
+              </Link>
             </>
           )}
         </div>
