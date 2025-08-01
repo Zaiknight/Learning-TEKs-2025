@@ -17,6 +17,7 @@ import categoryRoutes from "./routes/category.routes";
 import productRoutes from "./routes/product.routes";
 import cartRoutes from "./routes/cart.routes";
 import itemsRoutes from "./routes/cartItems.routes";
+import orderRoutes from "./routes/orders.routes";
 
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/categories",categoryRoutes);
 app.use("/products",productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/cartItem", itemsRoutes);
+app.use("/order", orderRoutes);
 //image files are in: public/uploads/
 app.use('/upload', express.static('public/uploads'));
 app.use(NotFoundHandler);

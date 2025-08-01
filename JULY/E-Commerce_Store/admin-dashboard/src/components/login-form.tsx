@@ -68,6 +68,7 @@ export function LoginForm({
       // Store admin name for welcome message
       if (adminName) {
         localStorage.setItem("adminName", adminName);
+        navigate("/dashboard");
       }
       if (adminEmail) {
         localStorage.setItem("adminEmail",adminEmail);
@@ -78,6 +79,8 @@ export function LoginForm({
     } catch (err: any) {
       setError(err.message || "Network error");
     }
+
+    navigate("/dashboard");
   };
 
   return (
