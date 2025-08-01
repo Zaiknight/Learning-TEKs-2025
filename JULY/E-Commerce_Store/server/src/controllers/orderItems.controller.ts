@@ -8,7 +8,7 @@ export const orderItemController = {
           const order = await orderItemsService.create(req.body);
           return ResponseHandler.success(res, "Item Added", 200, order);
         } catch (error : any) {
-          return ResponseHandler.error(res,error.message, 403)
+          return ResponseHandler.error(res,error.message, 422)
         }
       },
 
