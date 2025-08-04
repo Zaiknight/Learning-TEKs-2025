@@ -21,9 +21,6 @@ export class CartItemsRepo extends BaseRepository<CartItems>{
       "UPDATE cart_items SET quantity = quantity + 1 WHERE id = $1 RETURNING *",
       [cartItemId]
     );
-
-    
-
     return updated.rows[0];
   }
 
