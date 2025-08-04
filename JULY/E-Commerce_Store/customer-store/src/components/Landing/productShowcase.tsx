@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -125,8 +126,8 @@ export function FeaturedProducts() {
           setAddSuccess(product.id);
         }
       }
-    } catch {
-      // Optionally, show error UI here
+    } catch(error:any) {
+      console.error(error)
     }
     setAddingId(null);
     setTimeout(() => setAddSuccess(null), 1200);

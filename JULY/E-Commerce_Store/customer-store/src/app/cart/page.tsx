@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { Header } from "@/components/Landing/header";
 import { FeaturedProducts } from "@/components/Landing/productShowcase";
+import { useRouter } from "next/router";
 
 type CartItem = {
   id: number | string;
@@ -62,7 +63,7 @@ export default function CartPage() {
                         : "/placeholder.png",
                       quantity: item.quantity,
                       stock: prod.stock,
-                      cartItemId: item.id, // cartItem row id for backend PATCH/DELETE
+                      cartItemId: item.id, 
                     };
                   })
                 );
@@ -76,7 +77,7 @@ export default function CartPage() {
           setLoading(false);
         } else {
           setUser(null);
-          // Not logged in: use localStorage
+          // Not logged in use localStorage
           if (typeof window !== "undefined") {
             const cartLS = window.localStorage.getItem("cart");
             if (cartLS) {

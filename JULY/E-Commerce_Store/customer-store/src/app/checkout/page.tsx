@@ -27,6 +27,15 @@ type CartItem = {
   quantity: number;
 };
 
+type UserAddress = {
+  user_id ?: string;
+  address_1 : string;
+  address_2 ?: string;
+  province : string;
+  country : string;
+  contact : string;
+};
+
 export default function CheckoutPage() {
   const { cart } = useCartContext();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -43,9 +52,6 @@ export default function CheckoutPage() {
   const [postalCode, setPostalCode] = useState("");
   const [phone, setPhone] = useState("");
   const [saveInfo, setSaveInfo] = useState(false);
-  const [payment, setPayment] = useState("cod");
-  const [billingAddress, setBillingAddress] = useState("same");
-
   // Fetch cart items from context (guest) or backend (logged in)
   useEffect(() => {
     async function fetchCartItems() {
@@ -122,6 +128,10 @@ export default function CheckoutPage() {
   const shippingFee = 0;
   const total = subtotal + shippingFee;
 
+  function handleOrderComplete(): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <main className="bg-background min-h-screen">
       {/* Header bar */}
@@ -140,9 +150,6 @@ export default function CheckoutPage() {
           <section className="mb-8">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-bold">Contact</h2>
-              <Link href="/login" className="text-primary underline text-sm">
-                Log in
-              </Link>
             </div>
             <Input
               placeholder="Email"
@@ -298,7 +305,7 @@ export default function CheckoutPage() {
             </div>
           </section>
 
-          <Button size="lg" className="w-full bg-black text-white mt-6">
+          <Button size="lg" className="w-full bg-black text-white mt-6" onClick={handleOrderComplete}>
             Complete order
           </Button>
             </div>
@@ -308,7 +315,7 @@ export default function CheckoutPage() {
             <Link href="#">Shipping</Link>
             <Link href="#">Privacy policy</Link>
             <Link href="#">Terms of service</Link>
-            <Link href="#">Contact</Link>
+            <Link href="/#contact">Contact</Link>
           </footer>
           <Footer />
         
