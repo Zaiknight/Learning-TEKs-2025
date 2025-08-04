@@ -27,6 +27,9 @@ export const cartItemsService = {
     async subQuantity(item_id: number):Promise <CartItems | null> {
         const updated = await CartItemRepo.subQuantity(item_id);
         return updated;
-      }
+      },
+    async emptyCart(cart_id: number):Promise<void>{
+        await CartItemRepo.EmptyCart(cart_id);
+    }
 
 }

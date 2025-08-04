@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth w-full overflow-x-hidden`}
       >
         <CartProvider>
-        {children}
+          {children}
         </CartProvider>
       </body>
     </html>

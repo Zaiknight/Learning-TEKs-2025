@@ -36,6 +36,17 @@ export const cartItemController = {
             return ResponseHandler.error(res, error.message, 500);
           }
       },
+      
+      async emptyCart(req:Request, res: Response){
+        try {
+          const cart_id = Number(req.params.cartid);
+          await cartItemsService.emptyCart(cart_id);
+          return ResponseHandler.success(res, 'Item deleted successfully',204);
+        } catch (error:any) {
+          console.log(error.message);
+          return ResponseHandler.error(res, error.message, 500);
+        }
+      },
 
       async addQuantity(req: Request, res: Response){
         try {

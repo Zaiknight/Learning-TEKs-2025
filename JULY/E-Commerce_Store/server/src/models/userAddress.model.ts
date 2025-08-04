@@ -8,13 +8,17 @@ export interface UserAddress{
   province: string;
   country: string;
   contact: string;
+  user_email: string;
 }
 
-export const UserAddressDTO = z.object({
+export const AddressDTO = z.object({
   user_id: z.number().optional(),
   address_1: z.string(),
   address_2: z.string().optional(),
   province: z.string(),
   country: z.string(),
-  contact: z.string()
+  contact: z.string(),
+  user_email: z.string().optional()
 })
+
+export const UserAddressDTO = AddressDTO.partial();

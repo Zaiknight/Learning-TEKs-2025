@@ -8,6 +8,8 @@ router.post("/",cartItemController.create);
 router.get("/:cart_id",cartItemController.getByCartId);
 
 router.delete("/:id",cartItemController.delete);
+router.delete("/empty/:cartid", cartItemController.emptyCart);
+
 
 router.patch("/add/:id",cartItemController.addQuantity);
 router.patch("/sub/:id",cartItemController.subQuantity);

@@ -26,15 +26,17 @@ export class CartItemsRepo extends BaseRepository<CartItems>{
 
     return updated.rows[0];
   }
+
   async subQuantity(cartItemId:number){
     const updated = await pool.query(
       "UPDATE cart_items SET quantity = quantity -1 WHERE id = $1 RETURNING *",
       [cartItemId]
     );
-
-    
-
     return updated.rows[0];
+  }
+
+  async EmptyCart(cart_id: number){
+    await pool.query(`DELETE FROM ${this.table} WHERE cart_id = $1`,[cart_id]);
   }
 
 

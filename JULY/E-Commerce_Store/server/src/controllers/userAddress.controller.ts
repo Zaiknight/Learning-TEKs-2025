@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { UserAddressDTO } from "../models/userAddress.model";
 import { UserAddressService } from "../services/userAddress.service";
-import { parse } from "path";
 import { ResponseHandler } from "../utils/response";
 
 export const UserAddressController = {
