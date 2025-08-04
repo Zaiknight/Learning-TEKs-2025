@@ -9,6 +9,7 @@ export interface UserAddress{
   country: string;
   contact: string;
   user_email: string;
+  order_id: number;
 }
 
 export const AddressDTO = z.object({
@@ -18,7 +19,8 @@ export const AddressDTO = z.object({
   province: z.string(),
   country: z.string(),
   contact: z.string(),
-  user_email: z.string().optional()
+  user_email: z.string().optional(),
+  order_id: z.number(),
 })
 
 export const UserAddressDTO = AddressDTO.partial();

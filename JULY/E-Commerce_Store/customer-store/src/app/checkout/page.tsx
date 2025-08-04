@@ -188,30 +188,8 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      // 1. Deposit user address
-      const addressPayload = {
-        user_id: user?.id,
-        address_1: address1,
-        address_2: address2,
-        province: city, // You may want to add a province selector instead of city
-        country: "Pakistan",
-        contact: phone,
-        user_email: email,
-      };
 
-      const addressRes = await fetch("/api/checkout/address", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(addressPayload),
-      });
-      if (!addressRes.ok) {
-        const data = await addressRes.json().catch(() => ({}));
-        setErrors({ address: data?.error || "Failed to save address." });
-        setSubmitting(false);
-        return;
-      }
-
-      // 2. Create order
+      // 1. Create order
       let orderId: number | undefined = undefined;
       if (user) {
         // Logged-in: create order with user_id & email
@@ -256,6 +234,31 @@ export default function CheckoutPage() {
         return;
       }
 
+      // 2. Deposit user address
+      const addressPayload = {
+        user_id: user?.id,
+        address_1: address1,
+        address_2: address2,
+        province: city,
+        country: "Pakistan",
+        contact: phone,
+        user_email: email,
+        order_id: orderId
+      };
+
+      const addressRes = await fetch("/api/checkout/address", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(addressPayload),
+      });
+      if (!addressRes.ok) {
+        const data = await addressRes.json().catch(() => ({}));
+        setErrors({ address: data?.error || "Failed to save address." });
+        setSubmitting(false);
+        return;
+      }
+
+      
       // 3. Add order items (copy cart items)
       for (const item of cartItems) {
         const orderItemPayload = {
