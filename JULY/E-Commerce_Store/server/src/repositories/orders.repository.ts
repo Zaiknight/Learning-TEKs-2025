@@ -17,6 +17,9 @@ export class OrderRepository extends BaseRepository<Order> {
     }
 
     async getByEmail(user_email:string){
-        return this.findByParameter('user_email',user_email);
+        const res = await pool.query(
+            `SELECT * FROM orders WHERE user_email = $1`,[user_email]
+        );
+        return res.rows;
     }
 }
