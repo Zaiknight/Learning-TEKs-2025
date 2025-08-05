@@ -148,7 +148,7 @@ export const CategoryAPI = {
                 delete backendCategory.image;
             }
             const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-                method: "PUT",
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },

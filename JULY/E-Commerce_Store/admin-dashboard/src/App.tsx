@@ -7,6 +7,7 @@ import Signup from "./routes/signup/signup";
 import UsersPage from "./routes/users/UsersPage";
 import CategoriesPage from "./routes/categories/CategoriesPage";
 import ProductsPage from "./routes/products/ProductsPage";
+import OrdersPage from "./routes/orders/OrderPage";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
                 <Route path="/products" element={<ProductsPage />} />
+                <Route path="/orders" element={<OrdersPage/>} />
               </Route>
           </Routes>
       </ThemeProvider>

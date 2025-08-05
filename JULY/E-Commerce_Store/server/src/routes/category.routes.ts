@@ -10,7 +10,7 @@ router.get("/name/:name", CategoryController.getByName);
 
 router.post("/",upload.single('image') ,CategoryController.create);
 
-router.put("/:id",CategoryController.update);
+router.patch("/:id",CategoryController.update);
 
 router.delete("/:id", CategoryController.delete);
 

@@ -17,5 +17,14 @@ export const OrderService = {
     async createOrder(orderData : any){
         const order = await OrderRepo.create(orderData);
         return order;
+    },
+
+    async updateOrder(id: number, OrderData : any) {
+      const order = await OrderRepo.update(id,OrderData);
+      return order;
+    },
+
+    async getAll(){
+      return OrderRepo.findAll();
     }
 }

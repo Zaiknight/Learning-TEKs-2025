@@ -9,4 +9,9 @@ router.post("/:email", OrderController.createGuest);
 
 router.get("/:email",OrderController.GetByEmail);
 
+router.get("/", OrderController.getAll)
+
+router.patch("/:id", OrderController.update);
+
+
 export default router;

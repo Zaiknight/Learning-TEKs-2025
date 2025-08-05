@@ -4,6 +4,17 @@ import { ResponseHandler } from "../utils/response";
 import { OrderDTO } from "../models/orders.model";
 
 export const OrderController = {
+  async getAll(req: Request, res: Response){
+    try {
+      const orders = await OrderService.getAll();
+      if(!orders){
+        return ResponseHandler.error(res, 'Orders not found', 404);
+      }
+      return ResponseHandler.success(res, 'Orders fetched successfully',200, orders);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message,500);
+    }
+  },
 
   async create(req:Request, res: Response){
     try {
@@ -42,4 +53,18 @@ export const OrderController = {
       return ResponseHandler.error(res, error.message,500);
     }
   },
+
+  async update(req: Request, res: Response){
+    try {
+      const id = Number(req.params.id);
+      const data = req.body;
+      const updated = await OrderService.updateOrder(id, data);
+      if(!updated){
+        return ResponseHandler.error(res, 'Order not found', 404);
+      }
+      return ResponseHandler.success(res, 'Order updated successfully',200, updated);
+    } catch (error:any) {
+      return ResponseHandler.error(res, error.message, 500);
+    }
+  }
 }

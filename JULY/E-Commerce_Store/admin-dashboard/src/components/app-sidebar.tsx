@@ -10,6 +10,7 @@ import {
   IconInnerShadowTop,
   IconSearch,
   IconSettings,
+  IconShoppingCart,
   IconUsers,
 } from "@tabler/icons-react"
 
@@ -55,6 +56,11 @@ const data = {
       title: "Products",
       url: "/products",
       icon: IconDatabase
+    },
+    {
+      title: "Orders",
+      url: "/orders",
+      icon: IconShoppingCart
     }
   ],
   navClouds: [
