@@ -11,10 +11,12 @@ import { useCartContext } from "@/context/CartContext";
 import { Header } from "@/components/Landing/header";
 import { Footer } from "@/components/Landing/footer";
 import { useRouter } from "next/navigation";
+import { CreditCardIcon } from "lucide-react";
+import { FaMoneyBillWave } from "react-icons/fa";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:5000";
 
-// Confetti component (uses canvas-confetti via CDN for demo, or use any ts/react confetti lib you like)
 function Confetti() {
   useEffect(() => {
     let confettiScript: HTMLScriptElement | null = null;
@@ -63,6 +65,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [payment, setPayment] = useState<string | null>('');
 
   // Form state
   const [email, setEmail] = useState("");
@@ -137,7 +140,6 @@ export default function CheckoutPage() {
         } else {
           setUser(null);
           setCartId(null);
-          // Not logged in: use context cart
           setCartItems(
             Object.values(cart).map((x) => ({
               product: {
@@ -155,7 +157,6 @@ export default function CheckoutPage() {
       }
     }
     fetchCartItems();
-    // eslint-disable-next-line
   }, [cart]);
 
   const subtotal = cartItems.reduce(
@@ -173,6 +174,7 @@ export default function CheckoutPage() {
     if (!address2) errs.address2 = "Address Line 2 is required.";
     if (!city) errs.city = "City is required.";
     if (!phone || !/^(\+92|0)\s?\d{10,12}$/.test(phone.replace(/\s+/g, ""))) errs.phone = "Please enter a valid phone number.";
+    if (!payment) errs.payment = "Please select payment method.";
     return errs;
   }
 
@@ -197,6 +199,7 @@ export default function CheckoutPage() {
           user_id: user.id,
           user_email: email,
           status: "pending",
+          payment_method: payment,
         };
         const orderRes = await fetch("/api/checkout/order", {
           method: "POST",
@@ -213,7 +216,11 @@ export default function CheckoutPage() {
         orderId = orderData?.data?.id;
       } else {
         // Guest: only create order by email
-        const guestPayload = { user_email: email };
+        const guestPayload = { 
+          user_email: email,
+          status: "pending",
+          payment_method: payment,
+         };
         const orderRes = await fetch("/api/checkout/guestOrder", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -425,7 +432,7 @@ export default function CheckoutPage() {
               )}
               <div className="flex gap-2 mb-2">
                 <Input
-                  placeholder="City"
+                  placeholder="Province"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   className={errors.city ? "border-red-500" : ""}
@@ -479,26 +486,37 @@ export default function CheckoutPage() {
             {/* Payment */}
             <section className="mb-0">
               <h2 className="text-lg font-bold mb-2">Payment</h2>
+              <RadioGroup defaultValue="comfortable">
               <Card>
-                <CardContent className="flex justify-between items-center py-4">
-                  <Label
-                    htmlFor="cod"
-                    className="text-base font-semibold px-4 py-3"
-                  >
+                <CardContent className="flex justify-between items-center py-4 ">
+                <RadioGroupItem value="Cash on Delivery (COD)" id="r1" onClick={() => setPayment("Cash on Delivery (COD)")}/>
+                <FaMoneyBillWave/>
                     Cash on Delivery (COD)
-                  </Label>
                   <div className="bg-muted px-4 py-3 text-sm text-muted-foreground">
-                    We deliver all over Pakistan. Estimated delivery time:
+                    Karachi: 1 to 4 working days.
+                    <br />
+                    Nationwide: 4 to 7 working days.
+                    <br />
+                  </div>
+                </CardContent>
+              </Card>
+              <br/>
+              <Card>
+                <CardContent className="flex justify-between items-center py-4 ">
+                <RadioGroupItem value="Online(Card Payment)" id="r1" onClick={() => setPayment("Online(Card Payment)")}/>
+                <CreditCardIcon/>
+                    Credit/Debit Card
+                  <div className="bg-muted px-4 py-3 text-sm text-muted-foreground">
+                    MasterCard and Visa Accepted
                     <br />
                     Karachi: 1 to 4 working days.
                     <br />
                     Nationwide: 4 to 7 working days.
                     <br />
-                    <br />
-                    Cash On Delivery is for Pakistan Only
                   </div>
                 </CardContent>
               </Card>
+              </RadioGroup>
               {errors.order && (
                 <div className="text-xs text-red-500 mt-2">{errors.order}</div>
               )}
