@@ -20,6 +20,7 @@ import itemsRoutes from "./routes/cartItems.routes";
 import orderRoutes from "./routes/orders.routes";
 import UserAddressRoutes from "./routes/userAddress.route"; 
 import orderItemsRoutes from "./routes/orderItems.route";
+import paymentsRouter from "./routes/payment.routes";
 
 
 
@@ -40,6 +41,7 @@ app.use("/orderItem", orderItemsRoutes);
 app.use ("/userAddress", UserAddressRoutes);
 //image files are in: public/uploads/
 app.use('/upload', express.static('public/uploads'));
+app.use("/checkout", paymentsRouter);
 app.use(NotFoundHandler);
 app.use(ErrorHandler);
 

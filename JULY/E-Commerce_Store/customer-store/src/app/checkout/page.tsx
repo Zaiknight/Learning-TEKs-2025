@@ -65,7 +65,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [payment, setPayment] = useState<string | null>('');
+  const [payment, setPayment] = useState<string | null>("");
 
   // Form state
   const [email, setEmail] = useState("");
@@ -97,7 +97,6 @@ export default function CheckoutPage() {
         const authData = await authRes.json();
         if (authRes.ok && authData.user) {
           setUser(authData.user);
-          // Logged in: get cart id
           const cartRes = await fetch(`${API_BASE_URL}/cart/${authData.user.id}`);
           if (cartRes.ok) {
             const cartData = await cartRes.json();
@@ -108,7 +107,6 @@ export default function CheckoutPage() {
               if (cartItemRes.ok) {
                 const cartItemData = await cartItemRes.json();
                 const items: any[] = Array.isArray(cartItemData.data) ? cartItemData.data : [];
-                // Fetch product details in parallel
                 const detailed = await Promise.all(
                   items.map(async (item) => {
                     const prodRes = await fetch(`${API_BASE_URL}/products/${item.product_id}`);
@@ -166,7 +164,6 @@ export default function CheckoutPage() {
   const shippingFee = 0;
   const total = subtotal + shippingFee;
 
-  // Field validation
   function validateFields() {
     const errs: { [key: string]: string } = {};
     if (!email || !/\S+@\S+\.\S+/.test(email)) errs.email = "Please enter a valid email address.";
@@ -178,7 +175,7 @@ export default function CheckoutPage() {
     return errs;
   }
 
-  // Handle order complete
+  // COD handler (default)
   async function handleOrderComplete(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
@@ -190,11 +187,8 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     try {
-
-      // 1. Create order
       let orderId: number | undefined = undefined;
       if (user) {
-        // Logged-in: create order with user_id & email
         const orderPayload = {
           user_id: user.id,
           user_email: email,
@@ -215,7 +209,6 @@ export default function CheckoutPage() {
         const orderData = await orderRes.json();
         orderId = orderData?.data?.id;
       } else {
-        // Guest: only create order by email
         const guestPayload = { 
           user_email: email,
           status: "pending",
@@ -241,7 +234,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      // 2. Deposit user address
+      // address
       const addressPayload = {
         user_id: user?.id,
         address_1: address1,
@@ -252,7 +245,6 @@ export default function CheckoutPage() {
         user_email: email,
         order_id: orderId
       };
-
       const addressRes = await fetch("/api/checkout/address", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -265,8 +257,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      
-      // 3. Add order items (copy cart items)
+      // order items
       for (const item of cartItems) {
         const orderItemPayload = {
           order_id: orderId,
@@ -286,25 +277,21 @@ export default function CheckoutPage() {
         }
       }
 
-      // 4. Clear cart items
+      // clear cart
       if (user && cartId) {
-        // Logged in user: call backend to empty cart
         await fetch(`${API_BASE_URL}/cartItem/empty/${cartId}`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
         });
       } else {
-        // Guest: clear localStorage cart and context
         if (typeof window !== "undefined") {
           localStorage.removeItem("cart");
         }
         setCart({});
       }
 
-      // Show order placed view
       setOrderPlaced(true);
 
-      // Confetti and redirect after 5 seconds
       setTimeout(() => {
         router.push("/");
       }, 5000);
@@ -315,7 +302,159 @@ export default function CheckoutPage() {
     }
   }
 
-  // Render order placed success view
+  // Stripe handler
+  async function handleStripePay(e: React.FormEvent) {
+    e.preventDefault();
+    setErrors({});
+    const fieldErrors = validateFields();
+    if (Object.keys(fieldErrors).length > 0) {
+      setErrors(fieldErrors);
+      return;
+    }
+    setSubmitting(true);
+
+    try {
+      let orderId: number | undefined = undefined;
+      if (user) {
+        const orderPayload = {
+          user_id: user.id,
+          user_email: email,
+          status: "pending",
+          payment_method: payment,
+          payment_status: "Paid"
+        };
+        const orderRes = await fetch("/api/checkout/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderPayload),
+        });
+        if (!orderRes.ok) {
+          const data = await orderRes.json().catch(() => ({}));
+          setErrors({ order: data?.error || "Failed to create order." });
+          setSubmitting(false);
+          return;
+        }
+        const orderData = await orderRes.json();
+        orderId = orderData?.data?.id;
+      } else {
+        const guestPayload = { 
+          user_email: email,
+          status: "pending",
+          payment_method: payment,
+         };
+        const orderRes = await fetch("/api/checkout/guestOrder", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(guestPayload),
+        });
+        if (!orderRes.ok) {
+          const data = await orderRes.json().catch(() => ({}));
+          setErrors({ order: data?.error || "Failed to create guest order." });
+          setSubmitting(false);
+          return;
+        }
+        const orderData = await orderRes.json();
+        orderId = orderData?.data?.id;
+      }
+      if (!orderId) {
+        setErrors({ order: "Order ID not returned." });
+        setSubmitting(false);
+        return;
+      }
+
+      // address
+      const addressPayload = {
+        user_id: user?.id,
+        address_1: address1,
+        address_2: address2,
+        province: city,
+        country: "Pakistan",
+        contact: phone,
+        user_email: email,
+        order_id: orderId
+      };
+      const addressRes = await fetch("/api/checkout/address", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(addressPayload),
+      });
+      if (!addressRes.ok) {
+        const data = await addressRes.json().catch(() => ({}));
+        setErrors({ address: data?.error || "Failed to save address." });
+        setSubmitting(false);
+        return;
+      }
+
+      // order items
+      for (const item of cartItems) {
+        const orderItemPayload = {
+          order_id: orderId,
+          product_id: item.product.id,
+          quantity: item.quantity,
+        };
+        const itemRes = await fetch("/api/checkout/orderItems", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderItemPayload),
+        });
+        if (!itemRes.ok) {
+          const data = await itemRes.json().catch(() => ({}));
+          setErrors({ orderItems: data?.error || "Failed to add order item." });
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      // clear cart
+      if (user && cartId) {
+        await fetch(`${API_BASE_URL}/cartItem/empty/${cartId}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+      } else {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("cart");
+        }
+        setCart({});
+      }
+      const stripeRes = await fetch("http://localhost:5000/checkout/stripe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          orderData: {
+            email,         
+            cartItems,     
+            total,         
+            address: {
+              address1,
+              address2,
+              city,
+              country,
+              postalCode,
+              phone,
+              firstName,
+              lastName,
+            }
+          }
+        }),
+      });
+      if (!stripeRes.ok) {
+        const data = await stripeRes.json().catch(() => ({}));
+        setErrors({ general: data?.error || "Stripe payment failed." });
+        setSubmitting(false);
+        return;
+      }
+      const { paymentUrl } = await stripeRes.json();
+      window.location.href = paymentUrl;
+    } catch (err: any) {
+      setErrors({ general: err.message || "Unexpected error occurred." });
+    } finally {
+      setSubmitting(false);
+      
+    }
+  }
+
   if (orderPlaced) {
     return (
       <main className="bg-background min-h-screen flex flex-col items-center justify-center">
@@ -342,7 +481,11 @@ export default function CheckoutPage() {
       </div>
       <div className="w-full flex flex-col md:flex-row md:justify-center md:gap-8 px-2 md:px-10 py-8 max-w-[1200px] mx-auto">
         <form
-          onSubmit={handleOrderComplete}
+          onSubmit={
+            payment === "Online(Card Payment)"
+              ? handleStripePay
+              : handleOrderComplete
+          }
           noValidate
           className="w-full flex flex-col md:flex-row md:justify-center md:gap-8 px-2 md:px-10 py-8 max-w-[1200px] mx-auto"
         >
@@ -487,36 +630,49 @@ export default function CheckoutPage() {
             <section className="mb-0">
               <h2 className="text-lg font-bold mb-2">Payment</h2>
               <RadioGroup defaultValue="comfortable">
-              <Card>
-                <CardContent className="flex justify-between items-center py-4 ">
-                <RadioGroupItem value="Cash on Delivery (COD)" id="r1" onClick={() => setPayment("Cash on Delivery (COD)")}/>
-                <FaMoneyBillWave/>
+                <Card>
+                  <CardContent className="flex justify-between items-center py-4 ">
+                    <RadioGroupItem
+                      value="Cash on Delivery (COD)"
+                      id="cod"
+                      checked={payment === "Cash on Delivery (COD)"}
+                      onClick={() => setPayment("Cash on Delivery (COD)")}
+                    />
+                    <FaMoneyBillWave />
                     Cash on Delivery (COD)
-                  <div className="bg-muted px-4 py-3 text-sm text-muted-foreground">
-                    Karachi: 1 to 4 working days.
-                    <br />
-                    Nationwide: 4 to 7 working days.
-                    <br />
-                  </div>
-                </CardContent>
-              </Card>
-              <br/>
-              <Card>
-                <CardContent className="flex justify-between items-center py-4 ">
-                <RadioGroupItem value="Online(Card Payment)" id="r1" onClick={() => setPayment("Online(Card Payment)")}/>
-                <CreditCardIcon/>
+                    <div className="bg-muted px-4 py-3 text-sm text-muted-foreground">
+                      Karachi: 1 to 4 working days.
+                      <br />
+                      Nationwide: 4 to 7 working days.
+                      <br />
+                    </div>
+                  </CardContent>
+                </Card>
+                <br />
+                <Card>
+                  <CardContent className="flex justify-between items-center py-4 ">
+                    <RadioGroupItem
+                      value="Online(Card Payment)"
+                      id="stripe"
+                      checked={payment === "Online(Card Payment)"}
+                      onClick={() => setPayment("Online(Card Payment)")}
+                    />
+                    <CreditCardIcon />
                     Credit/Debit Card
-                  <div className="bg-muted px-4 py-3 text-sm text-muted-foreground">
-                    MasterCard and Visa Accepted
-                    <br />
-                    Karachi: 1 to 4 working days.
-                    <br />
-                    Nationwide: 4 to 7 working days.
-                    <br />
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="bg-muted px-4 py-3 text-sm text-muted-foreground">
+                      MasterCard and Visa Accepted
+                      <br />
+                      Karachi: 1 to 4 working days.
+                      <br />
+                      Nationwide: 4 to 7 working days.
+                      <br />
+                    </div>
+                  </CardContent>
+                </Card>
               </RadioGroup>
+              {errors.payment && (
+                <div className="text-xs text-red-500 mt-2">{errors.payment}</div>
+              )}
               {errors.order && (
                 <div className="text-xs text-red-500 mt-2">{errors.order}</div>
               )}
@@ -586,7 +742,13 @@ export default function CheckoutPage() {
               type="submit"
               disabled={submitting}
             >
-              {submitting ? "Submitting..." : "Complete order"}
+              {submitting
+                ? payment === "Online(Card Payment)"
+                  ? "Redirecting..."
+                  : "Submitting..."
+                : payment === "Online(Card Payment)"
+                ? "Pay"
+                : "Complete order"}
             </Button>
           </div>
         </form>
